@@ -1,0 +1,105 @@
+.content__wrapper {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 var(--padding);
+}
+.content__wrapper__bg {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: stretch;
+  align-items: center;
+  background-color: var(--bg-color);
+}
+.flex__layout {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--gap-children);
+}
+.twoRow__grid__layout {
+  height: 100%;
+  width: 100%;
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: 1fr min-content;
+  gap: var(--gap-children);
+  align-items: center;
+  justify-items: center;
+}
+.twoRow__grid__layout__reversed {
+  height: 100%;
+  width: 100%;
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: min-content 1fr;
+  gap: var(--gap-children);
+  align-items: center;
+}
+.threeRow__grid__layout {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: min-content min-content 1fr;
+  gap: var(--gap-children);
+  justify-items: center;
+}
+.added__exercises {
+  width: 100%;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--padding);
+}
+.hidden {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: scale(0);
+}
+.visible {
+  transform: scale(1);
+}
+.action__container {
+  position: fixed;
+  height: 100vh;
+  width: 100%;
+  top: 0;
+  padding: 0 var(--padding);
+  z-index: 10;
+  pointer-events: none;
+  background-color: #0808089b;
+  opacity: 0;
+  transition: 0.3s;
+}
+.action__container__visible {
+  opacity: 1;
+  pointer-events: all;
+  backdrop-filter: blur(15px);
+}
+@media (min-width: 600px) {
+  .threeRow__grid__layout {
+    width: 450px;
+  }
+}
+@media only screen and (hover: none) and (pointer: coarse) {
+  #root {
+    min-height: -webkit-fill-available;
+  }
+  .content__wrapper,
+  .threeRow__grid__layout,
+  .twoRow__grid__layout,
+  .twoRow__grid__layout__reversed,
+  .content__wrapper__bg {
+    min-height: -webkit-fill-available;
+  }
+}

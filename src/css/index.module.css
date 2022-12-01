@@ -1,0 +1,37 @@
+.backgroundImage {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(10, 10, 10, 0.4), rgba(10, 10, 10, 0.4)),
+    url(../assets/indexBg.jpg);
+  background-size: cover;
+  background-position: top;
+  background-repeat: no-repeat;
+}
+.intro {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  z-index: 1;
+}
+.intro__header {
+  font-family: FormulaCondensed-Bold;
+  font-size: 6rem;
+  line-height: 1.05;
+}
+.intro__header__line {
+  height: 5.25rem;
+  text-align: center;
+}
+.intro__subheading {
+  max-width: 30ch;
+  text-align: center;
+}
+
+@media only screen and (hover: none) and (pointer: coarse) {
+  .content__wrapper {
+    min-height: -webkit-fill-available;
+  }
+}

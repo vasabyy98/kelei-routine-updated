@@ -1,0 +1,130 @@
+@font-face {
+  font-family: "FormulaCondensed-Bold";
+  src: url("./assets/FormulaCondensed-Bold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "PPPangramSansRounded-Medium";
+  src: url("./assets/PPPangramSansRounded-Medium.otf") format("opentype");
+}
+@font-face {
+  font-family: "PPPangramSansRounded-Semibold";
+  src: url("./assets/PPPangramSansRounded-Semibold.otf") format("opentype");
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+:root {
+  --bg-color: #080808;
+  --text-color: #f2f2f2;
+  --body-text-color: #bfbfbf;
+  --accent-color: #ecbe1e;
+  --stroke-color: #333333;
+  --gap-children: 1.5rem;
+  --padding: 3vh;
+}
+html {
+  font-size: 20px;
+  min-height: -webkit-fill-available;
+  background: var(--bg-color);
+}
+body {
+  font-family: PPPangramSansRounded-Medium;
+  font-size: 1rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+input {
+  all: unset;
+}
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+button {
+  all: unset;
+  transition: transform 0.25s ease-out;
+}
+button:hover {
+  cursor: pointer;
+  user-select: none;
+}
+a {
+  all: unset;
+  cursor: pointer;
+}
+form {
+  width: 100%;
+}
+::selection {
+  background: var(--text-color);
+  color: var(--bg-color);
+}
+#root {
+  position: relative;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+.content__wrapper {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: var(--padding);
+}
+@media only screen and (hover: none) and (pointer: coarse) {
+  #root {
+    min-height: -webkit-fill-available;
+  }
+  .content__wrapper {
+    min-height: -webkit-fill-available;
+  }
+}
+@media (min-width: 1200px) {
+  body {
+    background: var(--bg-color);
+    display: flex;
+    justify-content: center;
+  }
+  .device__width__error {
+    scale: 1;
+  }
+  #root {
+    width: 500px;
+    min-height: 100vh;
+    border-radius: 1.5rem;
+  }
+  .content__wrapper {
+    min-height: 100vh;
+  }
+  .form__group {
+    width: 100%;
+  }
+  .fixed {
+    width: 470px;
+  }
+}
+@media (min-width: 700px) {
+  .form__group {
+    width: 60%;
+  }
+}
+@media (min-width: 900px) {
+  .form__group {
+    width: 50%;
+  }
+}

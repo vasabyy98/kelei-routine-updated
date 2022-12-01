@@ -1,0 +1,72 @@
+.btns__row,
+.btns__col {
+  margin-bottom: var(--padding);
+  z-index: 0;
+}
+.btns__row {
+  width: 100%;
+  display: flex;
+  gap: 0.5rem;
+}
+.btns__col {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.btns__col__select {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.btn__select {
+  padding: 1.25rem;
+  border-radius: 1rem;
+  font-size: 0.9rem;
+  background: var(--bg-color);
+  cursor: pointer;
+}
+
+.btn {
+  padding: 1rem 0;
+  border-radius: 50rem;
+  box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.25);
+  flex: 1;
+  transition: transform 0.3s;
+}
+.btn:hover {
+  cursor: pointer;
+  user-select: none;
+}
+.btn span {
+  display: block;
+  text-align: center;
+}
+.primaryBtn {
+  position: relative;
+  background: var(--accent-color);
+  color: var(--bg-color);
+}
+
+.secondaryBtn {
+  position: relative;
+  border: 1px solid var(--accent-color);
+  color: var(--accent-color);
+}
+
+@media (min-width: 1200px) {
+  .btns__col {
+    width: 100% !important;
+  }
+}
+@media (min-width: 600px) {
+  .btns__col {
+    width: 450px;
+  }
+  .btns__row {
+    width: 450px;
+  }
+}
