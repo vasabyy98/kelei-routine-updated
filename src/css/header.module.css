@@ -15,10 +15,6 @@
   font-size: 1.5rem;
   line-height: 1.1;
 }
-.heading__h3 {
-  font-size: 1rem;
-  font-family: "NeueMontreal-Bold";
-}
 .subheading {
   color: var(--body-text-color);
   max-width: 22ch;

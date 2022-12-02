@@ -50,13 +50,30 @@
   background: var(--accent-color);
   color: var(--bg-color);
 }
-
 .secondaryBtn {
   position: relative;
   border: 1px solid var(--accent-color);
   color: var(--accent-color);
 }
-
+.entry__wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: -1px;
+}
+.entry__btn {
+  padding: 1rem 1rem;
+  border: 1px solid var(--stroke-color);
+  border-radius: 1rem;
+  cursor: pointer;
+  text-transform: capitalize;
+  text-align: center;
+}
+.entry__btn__details {
+  color: var(--accent-color);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
 @media (min-width: 1200px) {
   .btns__col {
     width: 100% !important;

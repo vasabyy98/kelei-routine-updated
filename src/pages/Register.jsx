@@ -11,6 +11,8 @@ import layout from "../css/layout.module.css";
 import styles from "../css/signin.module.css";
 import header from "../css/header.module.css";
 import btnStyles from "../css/btns.module.css";
+// components
+import Nav from "../components/Nav";
 
 function Login() {
   useLayoutEffect(() => {
@@ -56,6 +58,7 @@ function Login() {
   };
   return (
     <>
+      <Nav backBtn={true} backBtnUrl={"/login"} />
       <section className={layout.content__wrapper}>
         <form onSubmit={onSubmit} className={`${styles.form} ${layout.twoRow__grid__layout}`}>
           <div className={styles.form__inner}>

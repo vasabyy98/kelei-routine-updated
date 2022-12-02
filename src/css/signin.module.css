@@ -13,6 +13,15 @@
   display: flex;
   flex-direction: column;
 }
+
+.radio__wrapper {
+  width: 100%;
+  flex-direction: row;
+  gap: 1rem;
+}
+.radio__wrapper .form__control {
+  text-align: center;
+}
 .exercise__wrapper {
   position: relative;
   left: 50%;
@@ -31,6 +40,9 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+.radio__wrapper .form__control {
+  border: unset;
 }
 .form__control {
   position: relative;
@@ -58,6 +70,13 @@
   left: 0;
   right: 0;
   bottom: 0;
+  cursor: pointer;
+  border: 1px solid var(--stroke-color);
+  border-radius: 1rem;
+  transition: 0.3s ease-out;
+}
+.form__control__radio:checked {
+  border-color: var(--accent-color);
 }
 .clarification {
   display: flex;
