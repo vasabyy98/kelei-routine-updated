@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // utils
 import {
@@ -9,7 +9,8 @@ import {
 } from "../utils/animations/pageTransition";
 // auth
 import { logout } from "../firebase-config";
-// assets
+// css
+import btnStyles from "../css/btns.module.css";
 // assets
 import { ReactComponent as SignOut } from "../assets/signout.svg";
 import { ReactComponent as Hamburger } from "../assets/hamburger.svg";
@@ -19,6 +20,7 @@ import { ReactComponent as Home } from "../assets/home.svg";
 import { ReactComponent as Back } from "../assets/backArrow.svg";
 // css
 import nav from "../css/nav.module.css";
+import header from "../css/header.module.css";
 
 function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
   const navigate = useNavigate();
@@ -47,6 +49,18 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
       navbar.current.classList.remove(nav.showNavbar);
     }
   };
+  // ADD NEW POPUP
+  const [addWrapperVisible, setAddWrapperVisible] = useState(false);
+  const addWrapper = useRef();
+
+  useEffect(() => {
+    if (addWrapperVisible === true) {
+      addWrapper.current.classList.add(nav.show__options);
+    } else {
+      addWrapper.current.classList.remove(nav.show__options);
+    }
+  }, [addWrapperVisible]);
+
   // SMOOTH PAGE TRANSITION
   const navigateOutFunction = (url) => {
     const navigateFunc = () => {
@@ -56,6 +70,33 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
   };
   return (
     <>
+      <div ref={addWrapper} className={nav.add__wrapper}>
+        <header className={header.header}>
+          <h2 className={`${header.heading__h2}`}>
+            <span>What do you want to create?</span>
+          </h2>
+        </header>
+        <div className={btnStyles.btns__col}>
+          <button
+            onClick={() => navigateOutFunction("/create-exercise")}
+            className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
+          >
+            <span>Exercise</span>
+          </button>
+          <button
+            onClick={() => navigateOutFunction("/create-exerciseset")}
+            className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
+          >
+            <span>Exercise Set</span>
+          </button>
+          <button
+            onClick={() => setAddWrapperVisible(false)}
+            className={`${btnStyles.btn} ${btnStyles.secondaryBtn}`}
+          >
+            <span>Nothing</span>
+          </button>
+        </div>
+      </div>
       <div onClick={navSwitchHandler} ref={navSwitchWrapper} className={nav.nav__switch__wrapper}>
         <div ref={navSwitch} className={nav.nav__switch}>
           <Hamburger className={nav.nav__svg} />
@@ -69,7 +110,7 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
           </div>
         )}
         {addBtn && (
-          <div onClick={() => navigateOutFunction("/create-exercise")} className={nav.nav__btn}>
+          <div onClick={() => setAddWrapperVisible(true)} className={nav.nav__btn}>
             <Add className={nav.nav__svg} />
           </div>
         )}

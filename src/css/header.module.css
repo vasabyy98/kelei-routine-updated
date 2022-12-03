@@ -5,6 +5,11 @@
   gap: 0.5rem;
   z-index: 1;
 }
+.heading__h1,
+.heading__h2,
+.heading__h3 {
+  text-align: left;
+}
 .heading__h1 {
   font-size: 2.5rem;
   line-height: 1.1;
@@ -14,6 +19,11 @@
   flex-direction: column;
   font-size: 1.5rem;
   line-height: 1.1;
+}
+.heading__h3 {
+  font-size: 1.25rem;
+  line-height: 1.1;
+  margin-bottom: 1rem;
 }
 .subheading {
   color: var(--body-text-color);

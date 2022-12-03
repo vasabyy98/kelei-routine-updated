@@ -9,7 +9,7 @@ import {
 } from "../utils/animations/pageTransition";
 // auth
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, logout, db } from "../firebase-config";
+import { auth, db } from "../firebase-config";
 // firebase crud
 import { collection, getDocs, query } from "firebase/firestore";
 // get greeting
@@ -20,11 +20,6 @@ import home from "../css/home.module.css";
 import btnStyles from "../css/btns.module.css";
 import header from "../css/header.module.css";
 import nav from "../css/nav.module.css";
-// assets
-import { ReactComponent as SignOut } from "../assets/signout.svg";
-import { ReactComponent as Hamburger } from "../assets/hamburger.svg";
-import { ReactComponent as Add } from "../assets/add.svg";
-import { ReactComponent as Close } from "../assets/close.svg";
 // components
 import Nav from "../components/Nav";
 
@@ -66,12 +61,14 @@ function Home() {
   const homeContainer = useRef();
 
   useEffect(() => {
-    const homeContainerOffsetTop = homeContainer.current.offsetTop;
-    const headerContainerOffsetTop = headerContainer.current.offsetTop;
-    const value = window.innerHeight - homeContainerOffsetTop - headerContainerOffsetTop * 2;
+    if (data.length > 0) {
+      const homeContainerOffsetTop = homeContainer.current.offsetTop;
+      const headerContainerOffsetTop = headerContainer.current.offsetTop;
+      const value = window.innerHeight - homeContainerOffsetTop - headerContainerOffsetTop * 2;
 
-    homeContainer.current.style.maxHeight = `${value}px`;
-  }, [homeContainer]);
+      homeContainer.current.style.maxHeight = `${value}px`;
+    }
+  }, [data]);
 
   // NAV FUNCTIONALITY
   const [selectedLink, setSelectedLink] = useState("exercisesLink");
@@ -84,10 +81,12 @@ function Home() {
   // const timeTrackRef = useRef();
 
   useEffect(() => {
-    if (selectedLink === "exercisesLink") {
-      fadeInTransition(exercisesWrapper.current);
-    } else {
-      fadeOutTransition(exercisesWrapper.current);
+    if (data.length > 0) {
+      if (selectedLink === "exercisesLink") {
+        fadeInTransition(exercisesWrapper.current);
+      } else {
+        fadeOutTransition(exercisesWrapper.current);
+      }
     }
   }, [selectedLink]);
 
@@ -102,72 +101,76 @@ function Home() {
     <>
       <Nav signoutBtn={true} addBtn={true} />
       <div className={home.backgroundImage}></div>
-      <section className={layout.content__wrapper}>
-        <div className={layout.threeRow__grid__layout}>
-          <header ref={headerContainer} className={home.home__header}>
-            <h2 className={`${header.heading__h2}`}>
-              <span>{greeting}</span>
-              <span style={{ textTransform: "capitalize" }}>{userName}</span>
-            </h2>
-          </header>
-          <div className={home.home__nav}>
-            <div className={`${home.nav__item} ${home.nav__item__active}`}>
-              <input
-                onChange={handleLink}
-                id="exercises"
-                type="radio"
-                value="exercisesLink"
-                name="nav"
-                checked={selectedLink === "exercisesLink"}
-                className={home.nav__item__radio}
-              />
-              <label className={home.nav__item__label} htmlFor="exercises">
-                Exercises
-              </label>
-            </div>
-            <div className={`${home.nav__item} `}>
-              <input
-                onChange={handleLink}
-                id="exerciseSets"
-                type="radio"
-                value="exerciseSetsLink"
-                name="nav"
-                className={home.nav__item__radio}
-              />
-              <label className={home.nav__item__label} htmlFor="exerciseSets">
-                Exercise sets
-              </label>
-            </div>
-            <div className={home.nav__item}>
-              <input
-                onChange={handleLink}
-                id="plans"
-                type="radio"
-                value="plansLink"
-                name="nav"
-                className={home.nav__item__radio}
-              />
-              <label className={home.nav__item__label} htmlFor="plans">
-                Plans
-              </label>
-            </div>
-          </div>
-          <div ref={homeContainer} className={home.home__main}>
-            {selectedLink === "exercisesLink" && (
-              <div ref={exercisesWrapper} className={btnStyles.entry__wrapper}>
-                {data.map((exercise) => (
-                  <div className={btnStyles.entry__btn} key={exercise.id}>
-                    <span className={btnStyles.entry__btn__name}>{exercise.data.exerciseName}</span>
-                    <span className={btnStyles.entry__btn__details}>
-                      ({exercise.data.rm + "rm, " + exercise.data.weight + "kg"})
-                    </span>
-                  </div>
-                ))}
+      {data.length !== 0 && (
+        <section className={layout.content__wrapper}>
+          <div className={layout.threeRow__grid__layout}>
+            <header ref={headerContainer} className={home.home__header}>
+              <h2 className={`${header.heading__h2}`}>
+                <span>{greeting}</span>
+                <span style={{ textTransform: "capitalize" }}>{userName}</span>
+              </h2>
+            </header>
+            <div className={home.home__nav}>
+              <div className={`${home.nav__item} ${home.nav__item__active}`}>
+                <input
+                  onChange={handleLink}
+                  id="exercises"
+                  type="radio"
+                  value="exercisesLink"
+                  name="nav"
+                  checked={selectedLink === "exercisesLink"}
+                  className={home.nav__item__radio}
+                />
+                <label className={home.nav__item__label} htmlFor="exercises">
+                  Exercises
+                </label>
               </div>
-            )}
+              <div className={`${home.nav__item} `}>
+                <input
+                  onChange={handleLink}
+                  id="exerciseSets"
+                  type="radio"
+                  value="exerciseSetsLink"
+                  name="nav"
+                  className={home.nav__item__radio}
+                />
+                <label className={home.nav__item__label} htmlFor="exerciseSets">
+                  Exercise sets
+                </label>
+              </div>
+              <div className={home.nav__item}>
+                <input
+                  onChange={handleLink}
+                  id="plans"
+                  type="radio"
+                  value="plansLink"
+                  name="nav"
+                  className={home.nav__item__radio}
+                />
+                <label className={home.nav__item__label} htmlFor="plans">
+                  Plans
+                </label>
+              </div>
+            </div>
+            <div ref={homeContainer} className={home.home__main}>
+              {selectedLink === "exercisesLink" && (
+                <div ref={exercisesWrapper} className={btnStyles.entry__wrapper}>
+                  {data.map((exercise) => (
+                    <div className={btnStyles.entry__btn} key={exercise.id}>
+                      <span className={btnStyles.entry__btn__name}>
+                        {exercise.data.exerciseName}
+                      </span>
+                      <span className={btnStyles.entry__btn__details}>
+                        ({exercise.data.rm + "rm, " + exercise.data.weight + "kg"})
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </>
   );
 }

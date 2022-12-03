@@ -13,14 +13,24 @@
   display: flex;
   flex-direction: column;
 }
-
-.radio__wrapper {
+.radio__wrapper__row {
   width: 100%;
   flex-direction: row;
   gap: 1rem;
 }
-.radio__wrapper .form__control {
+.radio__wrapper__row .form__control {
   text-align: center;
+}
+.radio__wrapper__col {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  text-transform: capitalize;
+  gap: -1px;
+}
+.radio__wrapper__col .form__control {
+  border: unset;
 }
 .exercise__wrapper {
   position: relative;

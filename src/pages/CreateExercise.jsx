@@ -121,7 +121,7 @@ function CreateExercise() {
                 <div className={styles.form__control__selected}></div>
               </div>
             </div>
-            <div className={`${styles.input__wrapper} ${styles.radio__wrapper}`}>
+            <div className={`${styles.input__wrapper} ${styles.radio__wrapper__row}`}>
               <div className={`${styles.form__group} `}>
                 <div className={`${styles.form__control}`}>
                   <span>3-5</span>

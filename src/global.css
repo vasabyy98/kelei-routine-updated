@@ -65,6 +65,10 @@ a {
 form {
   width: 100%;
 }
+h1,
+h2 {
+  /* font-family: "PPPangramSansRounded-Semibold"; */
+}
 ::selection {
   background: var(--text-color);
   color: var(--bg-color);
