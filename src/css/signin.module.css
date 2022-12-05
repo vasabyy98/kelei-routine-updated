@@ -20,6 +20,7 @@
 }
 .radio__wrapper__row .form__control {
   text-align: center;
+  border: unset;
 }
 .radio__wrapper__col {
   width: 100%;
@@ -27,7 +28,6 @@
   flex-direction: column;
   text-align: center;
   text-transform: capitalize;
-  gap: -1px;
 }
 .radio__wrapper__col .form__control {
   border: unset;
@@ -73,7 +73,6 @@
 .form__control:focus + .form__control__selected {
   width: 100%;
 }
-
 .form__control__radio {
   position: absolute;
   top: 0;

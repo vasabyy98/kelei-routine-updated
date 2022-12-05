@@ -62,8 +62,7 @@ function CreateExerciseSet() {
     }
   };
 
-  // CHECK EMPTY FOR EMPTY VALUES
-
+  // CHECK INPUTS FOR EMPTY VALUES
   const exerciseSetNameInput = useRef();
 
   let canProceed = false;
@@ -75,7 +74,7 @@ function CreateExerciseSet() {
       canProceed = true;
     }
   };
-
+  // SUBMIT
   const exerciseSetCollectionRef = collection(db, `users/${auth.currentUser.uid}/exercisesSets`);
 
   const onSubmit = async (e) => {

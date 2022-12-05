@@ -5,10 +5,12 @@
 @font-face {
   font-family: "PPPangramSansRounded-Medium";
   src: url("./assets/PPPangramSansRounded-Medium.otf") format("opentype");
+  font-feature-settings: "salt" on, "case" on;
 }
 @font-face {
   font-family: "PPPangramSansRounded-Semibold";
   src: url("./assets/PPPangramSansRounded-Semibold.otf") format("opentype");
+  font-feature-settings: "salt" on, "case" on;
 }
 
 * {
@@ -80,6 +82,8 @@ h2 {
   min-height: 100vh;
   display: flex;
   justify-content: center;
+  transform: scale(1);
+  overflow-x: hidden;
 }
 .content__wrapper {
   width: 100%;

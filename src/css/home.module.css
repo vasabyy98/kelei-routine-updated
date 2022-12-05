@@ -4,6 +4,7 @@
   background: linear-gradient(0deg, rgba(10, 10, 10, 0.4), rgba(10, 10, 10, 0.4)),
     url(../assets/homeBg.png);
   background-size: cover;
+  background-position: center;
 }
 .home__header {
   position: relative;

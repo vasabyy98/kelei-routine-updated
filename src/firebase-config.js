@@ -15,6 +15,7 @@ import {
   addDoc,
   setDoc,
   doc,
+  deleteDoc,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -62,4 +63,28 @@ const logout = () => {
   signOut(auth);
 };
 
-export { auth, db, logInWithEmailAndPassword, registerWithEmailAndPassword, logout };
+const getData = (url, stateFunc) => {
+  const q = query(collection(db, url));
+
+  (async () => {
+    const data = await getDocs(q);
+
+    stateFunc(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+  })();
+};
+
+const deleteExercise = (exerciseId) => {
+  const docRef = doc(db, `users/${auth.currentUser.uid}/exercises`, exerciseId);
+
+  deleteDoc(docRef);
+};
+
+export {
+  auth,
+  db,
+  logInWithEmailAndPassword,
+  registerWithEmailAndPassword,
+  logout,
+  getData,
+  deleteExercise,
+};

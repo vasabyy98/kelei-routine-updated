@@ -21,9 +21,18 @@ import { ReactComponent as Back } from "../assets/backArrow.svg";
 // css
 import nav from "../css/nav.module.css";
 import header from "../css/header.module.css";
+// redux
+import { useDispatch, useSelector } from "react-redux";
+import { setPopupType, resetPopupType } from "../features/popupActionsType";
+// firestore crud
+import { deleteExercise } from "../firebase-config";
 
-function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
+function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn, setIsUpdated }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const popupType = useSelector((state) => state.popupActionType.popupType);
+  const exercise = useSelector((state) => state.selectedExercise);
 
   // POPUP NAV FUNCTIONALITY
   const [switchState, setSwitchState] = useState(false);
@@ -61,6 +70,12 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
     }
   }, [addWrapperVisible]);
 
+  useEffect(() => {
+    if (popupType === "exerciseOptions") {
+      setAddWrapperVisible(true);
+    }
+  }, [popupType]);
+
   // SMOOTH PAGE TRANSITION
   const navigateOutFunction = (url) => {
     const navigateFunc = () => {
@@ -71,30 +86,69 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
   return (
     <>
       <div ref={addWrapper} className={nav.add__wrapper}>
-        <header className={header.header}>
-          <h2 className={`${header.heading__h2}`}>
-            <span>What do you want to create?</span>
-          </h2>
-        </header>
         <div className={btnStyles.btns__col}>
-          <button
-            onClick={() => navigateOutFunction("/create-exercise")}
-            className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
-          >
-            <span>Exercise</span>
-          </button>
-          <button
-            onClick={() => navigateOutFunction("/create-exerciseset")}
-            className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
-          >
-            <span>Exercise Set</span>
-          </button>
-          <button
-            onClick={() => setAddWrapperVisible(false)}
-            className={`${btnStyles.btn} ${btnStyles.secondaryBtn}`}
-          >
-            <span>Nothing</span>
-          </button>
+          {popupType === "addEntry" && (
+            <>
+              <button
+                onClick={() => navigateOutFunction("/create-exercise")}
+                className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
+              >
+                <span>Exercise</span>
+              </button>
+              <button
+                onClick={() => navigateOutFunction("/create-exerciseset")}
+                className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
+              >
+                <span>Exercise Set</span>
+              </button>
+              <button
+                onClick={() => setAddWrapperVisible(false)}
+                className={`${btnStyles.btn} ${btnStyles.secondaryBtn}`}
+              >
+                <span>Nothing</span>
+              </button>
+            </>
+          )}
+          {popupType === "exerciseOptions" && (
+            <>
+              <button
+                // onClick={() => navigateOutFunction("/create-exercise")}
+                className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
+              >
+                <span>Edit</span>
+              </button>
+              <button
+                onClick={() => {
+                  deleteExercise(exercise._id);
+                  setAddWrapperVisible(false);
+                  setIsUpdated(false);
+                  setTimeout(() => {
+                    dispatch(resetPopupType());
+                  }, 300);
+                }}
+                className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
+              >
+                <span>Delete</span>
+              </button>
+              <button
+                // onClick={() => navigateOutFunction("/create-exerciseset")}
+                className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
+              >
+                <span>Start workout</span>
+              </button>
+              <button
+                onClick={() => {
+                  setAddWrapperVisible(false);
+                  setTimeout(() => {
+                    dispatch(resetPopupType());
+                  }, 300);
+                }}
+                className={`${btnStyles.btn} ${btnStyles.secondaryBtn}`}
+              >
+                <span>Nothing</span>
+              </button>
+            </>
+          )}
         </div>
       </div>
       <div onClick={navSwitchHandler} ref={navSwitchWrapper} className={nav.nav__switch__wrapper}>
