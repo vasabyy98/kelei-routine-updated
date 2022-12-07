@@ -16,52 +16,23 @@ import {
   setDoc,
   doc,
   deleteDoc,
+  QuerySnapshot,
+  updateDoc,
 } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC72A-TZWUdDk6ilE1xl_cG7BOkjt-4Opo",
-  authDomain: "kelei-routine.firebaseapp.com",
-  projectId: "kelei-routine",
-  storageBucket: "kelei-routine.appspot.com",
-  messagingSenderId: "944336982087",
-  appId: "1:944336982087:web:13b2ebb6d0b03a6c05a162",
-  measurementId: "G-EQET77N0Q1",
+  apiKey: import.meta.env.VITE_APP_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_APP_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_APP_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_APP_FIREBASE_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-
-const logInWithEmailAndPassword = async (email, password) => {
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-  } catch (err) {
-    console.error(err);
-    alert(err.message);
-  }
-};
-
-const registerWithEmailAndPassword = async (name, email, password) => {
-  try {
-    const res = await createUserWithEmailAndPassword(auth, email, password);
-    const user = res.user;
-    updateProfile(user, {
-      displayName: name,
-    });
-    await setDoc(doc(db, "users", user.uid), {
-      uid: user.uid,
-      name,
-      email,
-    });
-  } catch (err) {
-    console.error(err);
-    alert(err.message);
-  }
-};
-
-const logout = () => {
-  signOut(auth);
-};
 
 const getData = (url, stateFunc) => {
   const q = query(collection(db, url));
@@ -73,18 +44,38 @@ const getData = (url, stateFunc) => {
   })();
 };
 
-const deleteExercise = (exerciseId) => {
+const deleteExercise = async (exerciseId) => {
   const docRef = doc(db, `users/${auth.currentUser.uid}/exercises`, exerciseId);
 
   deleteDoc(docRef);
+
+  // get exerciseSets collections' docs containing exercise id
+  const excRef = query(collection(db, `users/${auth.currentUser.uid}/exercisesSets`));
+  const queryRef = query(excRef, where("data.selectedExercises", "array-contains", exerciseId));
+
+  // update doc
+  (async () => {
+    const req = await getDocs(queryRef);
+
+    req.docs.forEach((doc) => {
+      let data = doc.data().data;
+
+      data.selectedExercises = data.selectedExercises.filter((exercise) => exercise !== exerciseId);
+
+      updateDoc(doc.ref, { data }).catch((error) => {
+        console.log(error);
+      });
+    });
+  })();
 };
 
-export {
-  auth,
-  db,
-  logInWithEmailAndPassword,
-  registerWithEmailAndPassword,
-  logout,
-  getData,
-  deleteExercise,
-};
+export { auth, db, getData, deleteExercise };
+
+// const deleteItem = async (item) => {
+//   const d = query(collection(db, "allTasks"), where("id", "==", item.id));
+//   const docSnap = await getDocs(d);
+
+//   docSnap.forEach((doc) => {
+//     deleteDoc(doc.ref); // and not doc.data()
+//   });
+// };

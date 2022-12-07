@@ -1,6 +1,7 @@
 @font-face {
   font-family: "FormulaCondensed-Bold";
   src: url("./assets/FormulaCondensed-Bold.woff2") format("woff2");
+  font-feature-settings: "salt" on, "case" on;
 }
 @font-face {
   font-family: "PPPangramSansRounded-Medium";
@@ -35,6 +36,7 @@ html {
 body {
   font-family: PPPangramSansRounded-Medium;
   font-size: 1rem;
+  line-height: 1.2;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

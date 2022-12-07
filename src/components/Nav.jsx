@@ -8,7 +8,9 @@ import {
   fadeInTransition,
 } from "../utils/animations/pageTransition";
 // auth
-import { logout } from "../firebase-config";
+// import { logout } from "../firebase-config";
+// hooks
+import { useUserAuth } from "../hooks/UserAuthContext";
 // css
 import btnStyles from "../css/btns.module.css";
 // assets
@@ -27,12 +29,14 @@ import { setPopupType, resetPopupType } from "../features/popupActionsType";
 // firestore crud
 import { deleteExercise } from "../firebase-config";
 
-function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn, setIsUpdated }) {
+function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn, setExercises, exercises }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const { logOut, user } = useUserAuth();
+
   const popupType = useSelector((state) => state.popupActionType.popupType);
-  const exercise = useSelector((state) => state.selectedExercise);
+  const selectedExercise = useSelector((state) => state.selectedExercise);
 
   // POPUP NAV FUNCTIONALITY
   const [switchState, setSwitchState] = useState(false);
@@ -83,6 +87,29 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn, setIsUpdated })
     };
     fadeOutPageTransition(navigateFunc);
   };
+  // logOut
+  const handleLogOut = async () => {
+    logOut();
+    navigateOutFunction("/");
+  };
+  // onExerciseDelete
+  const onDelete = () => {
+    deleteExercise(selectedExercise._id);
+    setAddWrapperVisible(false);
+    setExercises([...exercises.filter((exercise) => exercise.id !== selectedExercise._id)]);
+
+    setTimeout(() => {
+      dispatch(resetPopupType());
+    }, 300);
+  };
+
+  const onStartWorkout = () => {
+    navigateOutFunction("/rep-counter");
+    setAddWrapperVisible(false);
+    setTimeout(() => {
+      dispatch(resetPopupType());
+    }, 300);
+  };
   return (
     <>
       <div ref={addWrapper} className={nav.add__wrapper}>
@@ -117,21 +144,11 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn, setIsUpdated })
               >
                 <span>Edit</span>
               </button>
-              <button
-                onClick={() => {
-                  deleteExercise(exercise._id);
-                  setAddWrapperVisible(false);
-                  setIsUpdated(false);
-                  setTimeout(() => {
-                    dispatch(resetPopupType());
-                  }, 300);
-                }}
-                className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
-              >
+              <button onClick={onDelete} className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}>
                 <span>Delete</span>
               </button>
               <button
-                // onClick={() => navigateOutFunction("/create-exerciseset")}
+                onClick={() => onStartWorkout()}
                 className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
               >
                 <span>Start workout</span>
@@ -159,7 +176,7 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn, setIsUpdated })
       </div>
       <nav ref={navbar} className={nav.fixed__nav}>
         {signoutBtn && (
-          <div onClick={() => logout()} className={nav.nav__btn}>
+          <div onClick={() => handleLogOut()} className={nav.nav__btn}>
             <SignOut className={nav.nav__svg} />
           </div>
         )}

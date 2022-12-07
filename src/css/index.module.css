@@ -2,9 +2,9 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(0deg, rgba(10, 10, 10, 0.4), rgba(10, 10, 10, 0.4)),
-    url(../assets/indexBg.jpg);
+    url(../assets/indexBackground.jpg);
   background-size: cover;
-  background-position: center;
+  background-position: top;
   background-repeat: no-repeat;
 }
 .intro {

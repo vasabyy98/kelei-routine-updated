@@ -8,10 +8,8 @@ import {
   fadeInTransition,
 } from "../utils/animations/pageTransition";
 // auth
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, db } from "../firebase-config";
+import { useUserAuth } from "../hooks/UserAuthContext";
 // firebase crud
-import { collection, getDocs, query } from "firebase/firestore";
 import { getData } from "../firebase-config";
 // get greeting
 import { getGreeting } from "../utils/getTime";
@@ -24,13 +22,20 @@ import nav from "../css/nav.module.css";
 // components
 import Nav from "../components/Nav";
 // redux
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setSelectedExercise } from "../features/selectedExerciseSlice";
 import { setPopupType } from "../features/popupActionsType";
 
 function Home() {
-  const exercise = useSelector((state) => state.selectedExercise);
+  // const [user, loading, error] = useAuthState(auth);
+  const { user } = useUserAuth();
 
+  return <>{user !== null && <Content />}</>;
+}
+
+export default Home;
+
+function Content() {
   const [greeting, setGreeting] = useState("Welcome back,");
 
   useLayoutEffect(() => {
@@ -42,31 +47,21 @@ function Home() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [user, loading, error] = useAuthState(auth);
+  // const [user, loading, error] = useAuthState(auth);
+  const { user } = useUserAuth();
 
   const [userName, setUserName] = useState("User");
   const [exercises, setExercises] = useState([]);
   const [sets, setSets] = useState([]);
 
-  const [isUpdated, setIsUpdated] = useState(false);
+  useEffect(() => {
+    getData(`users/${user.uid}/exercises`, setExercises);
+    getData(`users/${user.uid}/exercisesSets`, setSets);
+  }, [user]);
 
   useEffect(() => {
-    if (isUpdated === false) {
-      getData(`users/${auth.currentUser.uid}/exercises`, setExercises);
-      getData(`users/${auth.currentUser.uid}/exercisesSets`, setSets);
-      setIsUpdated(true);
-    }
-  }, [isUpdated]);
-
-  useEffect(() => {
-    if (loading) return;
-
-    if (!user) {
-      navigate("/");
-    } else {
-      setUserName(user.displayName);
-    }
-  }, [user, loading]);
+    setUserName(user.displayName);
+  }, [user]);
 
   // HOME CONTAINER MAX HEIGHT
   const headerContainer = useRef();
@@ -95,10 +90,8 @@ function Home() {
   useEffect(() => {
     if (exercises.length > 0) {
       if (selectedLink === "exercisesLink") {
-        fadeOutTransition(exercisesSetWrapper.current);
         fadeInTransition(exercisesWrapper.current);
       } else if (selectedLink === "exerciseSetsLink") {
-        fadeOutTransition(exercisesWrapper.current);
         fadeInTransition(exercisesSetWrapper.current);
       }
     }
@@ -113,7 +106,7 @@ function Home() {
   };
   return (
     <>
-      <Nav signoutBtn={true} addBtn={true} setIsUpdated={setIsUpdated} />
+      <Nav signoutBtn={true} addBtn={true} setExercises={setExercises} exercises={exercises} />
       <div className={home.backgroundImage}></div>
       <section className={layout.content__wrapper}>
         <div className={layout.threeRow__grid__layout}>
@@ -204,11 +197,8 @@ function Home() {
               </div>
             )}
           </div>
-          {/* )} */}
         </div>
       </section>
     </>
   );
 }
-
-export default Home;

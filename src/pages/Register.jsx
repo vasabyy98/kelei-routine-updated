@@ -5,7 +5,9 @@ import { useNavigate } from "react-router-dom";
 import { fadeInPageTransition, fadeOutPageTransition } from "../utils/animations/pageTransition";
 // auth
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, registerWithEmailAndPassword } from "../firebase-config";
+// import { auth, registerWithEmailAndPassword } from "../firebase-config";
+// hooks
+import { useUserAuth } from "../hooks/UserAuthContext";
 // css
 import layout from "../css/layout.module.css";
 import styles from "../css/signin.module.css";
@@ -26,7 +28,8 @@ function Login() {
   });
 
   const { email, password, name } = formData;
-  const [user, loading, error] = useAuthState(auth);
+  const { user, signUp } = useUserAuth();
+  const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
@@ -37,18 +40,17 @@ function Login() {
     }));
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
 
-    registerWithEmailAndPassword(name, email, password);
+    signUp(name, email, password);
   };
 
   useEffect(() => {
-    if (loading) return;
     if (user) {
       navigateOutFunction("/home");
     }
-  }, [user, loading]);
+  }, [user]);
 
   const navigateOutFunction = (url) => {
     const navigateFunc = () => {
@@ -58,6 +60,7 @@ function Login() {
   };
   return (
     <>
+      {error}
       <Nav backBtn={true} backBtnUrl={"/login"} />
       <section className={layout.content__wrapper}>
         <form onSubmit={onSubmit} className={`${styles.form} ${layout.twoRow__grid__layout}`}>

@@ -9,6 +9,7 @@ import header from "../css/header.module.css";
 import nav from "../css/nav.module.css";
 import styles from "../css/signin.module.css";
 // firebase crud
+import { useUserAuth } from "../hooks/UserAuthContext";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { addDoc, collection } from "firebase/firestore";
 import { db, auth } from "../firebase-config";
@@ -16,7 +17,8 @@ import { db, auth } from "../firebase-config";
 import Nav from "../components/Nav";
 
 function CreateExercise() {
-  const [user, loading, error] = useAuthState(auth);
+  // const [user, loading, error] = useAuthState(auth);
+  const { user } = useUserAuth();
 
   useLayoutEffect(() => {
     fadeInPageTransition();
@@ -39,7 +41,7 @@ function CreateExercise() {
     }));
   };
 
-  const exerciseCollectionRef = collection(db, `users/${auth.currentUser.uid}/exercises`);
+  const exerciseCollectionRef = collection(db, `users/${user.uid}/exercises`);
 
   const exerciseNameInput = useRef();
   const weightInput = useRef();
