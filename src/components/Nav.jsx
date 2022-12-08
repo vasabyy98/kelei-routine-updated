@@ -27,9 +27,19 @@ import header from "../css/header.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { setPopupType, resetPopupType } from "../features/popupActionsType";
 // firestore crud
-import { deleteExercise } from "../firebase-config";
+import { deleteExercise, deleteExerciseSet } from "../firebase-config";
 
-function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn, setExercises, exercises }) {
+function Nav({
+  homebtn,
+  signoutBtn,
+  backBtn,
+  backBtnUrl,
+  addBtn,
+  setExercises,
+  exercises,
+  sets,
+  setSets,
+}) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -37,6 +47,7 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn, setExercises, e
 
   const popupType = useSelector((state) => state.popupActionType.popupType);
   const selectedExercise = useSelector((state) => state.selectedExercise);
+  const selectedExerciseSet = useSelector((state) => state.selectedExerciseSet);
 
   // POPUP NAV FUNCTIONALITY
   const [switchState, setSwitchState] = useState(false);
@@ -77,6 +88,8 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn, setExercises, e
   useEffect(() => {
     if (popupType === "exerciseOptions") {
       setAddWrapperVisible(true);
+    } else if (popupType === "exerciseSetOptions") {
+      setAddWrapperVisible(true);
     }
   }, [popupType]);
 
@@ -93,7 +106,7 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn, setExercises, e
     navigateOutFunction("/");
   };
   // onExerciseDelete
-  const onDelete = () => {
+  const onDeleteExercise = () => {
     deleteExercise(selectedExercise._id);
     setAddWrapperVisible(false);
     setExercises([...exercises.filter((exercise) => exercise.id !== selectedExercise._id)]);
@@ -106,6 +119,24 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn, setExercises, e
   const onStartWorkout = () => {
     navigateOutFunction("/rep-counter");
     setAddWrapperVisible(false);
+    setTimeout(() => {
+      dispatch(resetPopupType());
+    }, 300);
+  };
+
+  const onEditExercise = () => {
+    navigateOutFunction("/change-exercise");
+    setAddWrapperVisible(false);
+    setTimeout(() => {
+      dispatch(resetPopupType());
+    }, 300);
+  };
+
+  const onDeleteExerciseSet = () => {
+    deleteExerciseSet(selectedExerciseSet._id);
+    setAddWrapperVisible(false);
+    setSets([...sets.filter((set) => set.id !== selectedExerciseSet._id)]);
+
     setTimeout(() => {
       dispatch(resetPopupType());
     }, 300);
@@ -139,16 +170,52 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn, setExercises, e
           {popupType === "exerciseOptions" && (
             <>
               <button
-                // onClick={() => navigateOutFunction("/create-exercise")}
+                onClick={onEditExercise}
                 className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
               >
                 <span>Edit</span>
               </button>
-              <button onClick={onDelete} className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}>
+              <button
+                onClick={onDeleteExercise}
+                className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
+              >
                 <span>Delete</span>
               </button>
               <button
-                onClick={() => onStartWorkout()}
+                onClick={onStartWorkout}
+                className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
+              >
+                <span>Start workout</span>
+              </button>
+              <button
+                onClick={() => {
+                  setAddWrapperVisible(false);
+                  setTimeout(() => {
+                    dispatch(resetPopupType());
+                  }, 300);
+                }}
+                className={`${btnStyles.btn} ${btnStyles.secondaryBtn}`}
+              >
+                <span>Nothing</span>
+              </button>
+            </>
+          )}
+          {popupType === "exerciseSetOptions" && (
+            <>
+              <button
+                // onClick={onEditExercise}
+                className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
+              >
+                <span>Edit</span>
+              </button>
+              <button
+                onClick={onDeleteExerciseSet}
+                className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
+              >
+                <span>Delete</span>
+              </button>
+              <button
+                // onClick={onStartWorkout}
                 className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
               >
                 <span>Start workout</span>

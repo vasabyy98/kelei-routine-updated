@@ -36,9 +36,10 @@ function CreateExerciseSet() {
   const [exerciseSetData, setExerciseSetData] = useState({
     exerciseSetName: "",
     routine: "",
+    volume: "",
   });
 
-  const { exerciseSetName, routine } = exerciseSetData;
+  const { exerciseSetName, routine, volume } = exerciseSetData;
 
   const navigate = useNavigate();
 
@@ -68,9 +69,9 @@ function CreateExerciseSet() {
   let canProceed = false;
 
   const checkEmptyInputs = () => {
-    if (exerciseSetName === "" && routine === "") {
+    if (exerciseSetName === "" && routine === "" && volume === "") {
       exerciseSetNameInput.current.scrollIntoView();
-    } else if (exerciseSetName !== "" && routine !== "") {
+    } else {
       canProceed = true;
     }
   };
@@ -85,6 +86,7 @@ function CreateExerciseSet() {
     const data = {
       exerciseSetName,
       routine,
+      volume,
       selectedExercises,
     };
 
@@ -125,6 +127,18 @@ function CreateExerciseSet() {
                   value={exerciseSetName}
                   onChange={onChange}
                   placeholder="Exercise set name"
+                />
+                <div className={styles.form__control__selected}></div>
+              </div>
+              <div className={`${styles.form__group} `}>
+                <input
+                  type="number"
+                  className={styles.form__control}
+                  id="exerciseSetVolume"
+                  name="volume"
+                  value={volume}
+                  onChange={onChange}
+                  placeholder="Exercise set volume"
                 />
                 <div className={styles.form__control__selected}></div>
               </div>

@@ -24,6 +24,7 @@ import Nav from "../components/Nav";
 // redux
 import { useDispatch } from "react-redux";
 import { setSelectedExercise } from "../features/selectedExerciseSlice";
+import { setSelectedExerciseSet } from "../features/selectedExerciseSetSlice";
 import { setPopupType } from "../features/popupActionsType";
 
 function Home() {
@@ -47,7 +48,6 @@ function Content() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // const [user, loading, error] = useAuthState(auth);
   const { user } = useUserAuth();
 
   const [userName, setUserName] = useState("User");
@@ -96,17 +96,16 @@ function Content() {
       }
     }
   }, [selectedLink]);
-
-  // SMOOTH PAGE TRANSITION
-  const navigateOutFunction = (url) => {
-    const navigateFunc = () => {
-      navigate(url);
-    };
-    fadeOutPageTransition(navigateFunc);
-  };
   return (
     <>
-      <Nav signoutBtn={true} addBtn={true} setExercises={setExercises} exercises={exercises} />
+      <Nav
+        signoutBtn={true}
+        addBtn={true}
+        setExercises={setExercises}
+        exercises={exercises}
+        sets={sets}
+        setSets={setSets}
+      />
       <div className={home.backgroundImage}></div>
       <section className={layout.content__wrapper}>
         <div className={layout.threeRow__grid__layout}>
@@ -144,19 +143,6 @@ function Content() {
                 Exercise sets
               </label>
             </div>
-            <div className={home.nav__item}>
-              <input
-                onChange={handleLink}
-                id="plans"
-                type="radio"
-                value="plansLink"
-                name="nav"
-                className={home.nav__item__radio}
-              />
-              <label className={home.nav__item__label} htmlFor="plans">
-                Plans
-              </label>
-            </div>
           </div>
           {/* {data.length !== 0 && ( */}
           <div ref={homeContainer} className={home.home__main}>
@@ -184,14 +170,16 @@ function Content() {
                 {sets.map((set) => (
                   <div
                     onClick={() => {
-                      // dispatch(setSelectedExercise(exercise));
-                      dispatch(setPopupType("exerciseOptions"));
+                      dispatch(setSelectedExerciseSet(set));
+                      dispatch(setPopupType("exerciseSetOptions"));
                     }}
                     className={btnStyles.entry__btn}
                     key={set.id}
                   >
                     <span className={btnStyles.entry__btn__name}>{set.data.exerciseSetName}</span>
-                    <span className={btnStyles.entry__btn__details}>({set.data.routine})</span>
+                    <span className={btnStyles.entry__btn__details}>
+                      ({set.data.routine + ", " + set.data.volume})
+                    </span>
                   </div>
                 ))}
               </div>

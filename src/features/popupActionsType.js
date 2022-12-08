@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  popupType: "addEntry",
+  popupType: "",
 };
 
 export const popupActionsTypeSlice = createSlice({

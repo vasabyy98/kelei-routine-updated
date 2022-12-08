@@ -69,7 +69,23 @@ const deleteExercise = async (exerciseId) => {
   })();
 };
 
-export { auth, db, getData, deleteExercise };
+const updateExercise = async (exerciseId, updatedData) => {
+  const docRef = doc(db, `users/${auth.currentUser.uid}/exercises`, exerciseId);
+
+  const data = updatedData;
+
+  updateDoc(docRef, { data }).catch((error) => {
+    console.log(error);
+  });
+};
+
+const deleteExerciseSet = async (exerciseSetId) => {
+  const docRef = doc(db, `users/${auth.currentUser.uid}/exercisesSets`, exerciseSetId);
+
+  deleteDoc(docRef);
+};
+
+export { auth, db, getData, deleteExercise, updateExercise, deleteExerciseSet };
 
 // const deleteItem = async (item) => {
 //   const d = query(collection(db, "allTasks"), where("id", "==", item.id));
