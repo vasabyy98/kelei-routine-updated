@@ -21,6 +21,7 @@
 .radio__wrapper__row .form__control {
   text-align: center;
   border: unset;
+  padding: 1.25rem 0;
 }
 .radio__wrapper__col {
   width: 100%;
@@ -57,9 +58,13 @@
 .form__control {
   position: relative;
   display: block;
-  padding: 1.25rem 0;
+  padding: 1rem;
   border-bottom: 1px solid var(--stroke-color);
   transition: 0.3s ease-out;
+}
+.form__control[type="text"],
+.form__control[type="number"] {
+  padding: 1rem 0;
 }
 .form__control__selected {
   position: absolute;

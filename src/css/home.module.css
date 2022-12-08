@@ -48,7 +48,7 @@
 .home__main {
   width: 100%;
   z-index: 1;
-  /* overflow-y: scroll; */
+  overflow-y: auto;
 }
 @media only screen and (hover: none) and (pointer: coarse) {
   .container {

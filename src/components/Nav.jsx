@@ -1,14 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // utils
-import {
-  fadeInPageTransition,
-  fadeOutPageTransition,
-  fadeOutTransition,
-  fadeInTransition,
-} from "../utils/animations/pageTransition";
-// auth
-// import { logout } from "../firebase-config";
+import { fadeOutPageTransition } from "../utils/animations/pageTransition";
 // hooks
 import { useUserAuth } from "../hooks/UserAuthContext";
 // css
@@ -22,7 +15,6 @@ import { ReactComponent as Home } from "../assets/home.svg";
 import { ReactComponent as Back } from "../assets/backArrow.svg";
 // css
 import nav from "../css/nav.module.css";
-import header from "../css/header.module.css";
 // redux
 import { useDispatch, useSelector } from "react-redux";
 import { setPopupType, resetPopupType } from "../features/popupActionsType";
@@ -43,7 +35,7 @@ function Nav({
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { logOut, user } = useUserAuth();
+  const { logOut } = useUserAuth();
 
   const popupType = useSelector((state) => state.popupActionType.popupType);
   const selectedExercise = useSelector((state) => state.selectedExercise);
@@ -90,6 +82,8 @@ function Nav({
       setAddWrapperVisible(true);
     } else if (popupType === "exerciseSetOptions") {
       setAddWrapperVisible(true);
+    } else if (popupType === "addEntry") {
+      setAddWrapperVisible(true);
     }
   }, [popupType]);
 
@@ -108,36 +102,52 @@ function Nav({
   // onExerciseDelete
   const onDeleteExercise = () => {
     deleteExercise(selectedExercise._id);
-    setAddWrapperVisible(false);
     setExercises([...exercises.filter((exercise) => exercise.id !== selectedExercise._id)]);
 
     setTimeout(() => {
+      setAddWrapperVisible(false);
       dispatch(resetPopupType());
     }, 300);
   };
-
+  // open exercise rep counter page
   const onStartWorkout = () => {
     navigateOutFunction("/rep-counter");
-    setAddWrapperVisible(false);
     setTimeout(() => {
+      setAddWrapperVisible(false);
       dispatch(resetPopupType());
     }, 300);
   };
-
+  // edit exercise
   const onEditExercise = () => {
     navigateOutFunction("/change-exercise");
-    setAddWrapperVisible(false);
     setTimeout(() => {
+      setAddWrapperVisible(false);
       dispatch(resetPopupType());
     }, 300);
   };
-
+  // delete exercise set
   const onDeleteExerciseSet = () => {
     deleteExerciseSet(selectedExerciseSet._id);
-    setAddWrapperVisible(false);
     setSets([...sets.filter((set) => set.id !== selectedExerciseSet._id)]);
 
     setTimeout(() => {
+      setAddWrapperVisible(false);
+      dispatch(resetPopupType());
+    }, 300);
+  };
+  // edit exercise set
+  const onEditExerciseSet = () => {
+    navigateOutFunction("/change-exerciseset");
+    setTimeout(() => {
+      setAddWrapperVisible(false);
+      dispatch(resetPopupType());
+    }, 300);
+  };
+  // create exercise
+  const onCreate = (url) => {
+    navigateOutFunction(url);
+    setTimeout(() => {
+      setAddWrapperVisible(false);
       dispatch(resetPopupType());
     }, 300);
   };
@@ -148,13 +158,13 @@ function Nav({
           {popupType === "addEntry" && (
             <>
               <button
-                onClick={() => navigateOutFunction("/create-exercise")}
+                onClick={() => onCreate("/create-exercise")}
                 className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
               >
                 <span>Exercise</span>
               </button>
               <button
-                onClick={() => navigateOutFunction("/create-exerciseset")}
+                onClick={() => onCreate("/create-exerciseset")}
                 className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
               >
                 <span>Exercise Set</span>
@@ -203,7 +213,7 @@ function Nav({
           {popupType === "exerciseSetOptions" && (
             <>
               <button
-                // onClick={onEditExercise}
+                onClick={onEditExerciseSet}
                 className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
               >
                 <span>Edit</span>
@@ -248,7 +258,13 @@ function Nav({
           </div>
         )}
         {addBtn && (
-          <div onClick={() => setAddWrapperVisible(true)} className={nav.nav__btn}>
+          <div
+            onClick={() => {
+              dispatch(setPopupType("addEntry"));
+              setAddWrapperVisible(true);
+            }}
+            className={nav.nav__btn}
+          >
             <Add className={nav.nav__svg} />
           </div>
         )}

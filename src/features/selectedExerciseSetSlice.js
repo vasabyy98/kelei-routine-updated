@@ -3,6 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   exerciseSetName: "",
   volume: "",
+  routine: "",
+  selectedExercises: "",
   _id: "",
 };
 
@@ -14,6 +16,8 @@ export const selectedExerciseSetSlice = createSlice({
     setSelectedExerciseSet: (state, action) => {
       state.exerciseSetName = action.payload.data.exerciseSetName;
       state.volume = action.payload.data.volume;
+      state.routine = action.payload.data.routine;
+      state.selectedExercises = action.payload.data.selectedExercises;
       state._id = action.payload.id;
     },
   },

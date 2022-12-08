@@ -26,9 +26,9 @@ import { useDispatch } from "react-redux";
 import { setSelectedExercise } from "../features/selectedExerciseSlice";
 import { setSelectedExerciseSet } from "../features/selectedExerciseSetSlice";
 import { setPopupType } from "../features/popupActionsType";
+import { setExercisesRedux } from "../features/exercisesSlice";
 
 function Home() {
-  // const [user, loading, error] = useAuthState(auth);
   const { user } = useUserAuth();
 
   return <>{user !== null && <Content />}</>;
@@ -45,10 +45,8 @@ function Content() {
     setGreeting(() => getGreeting());
   }, []);
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
   const { user } = useUserAuth();
+  const dispatch = useDispatch();
 
   const [userName, setUserName] = useState("User");
   const [exercises, setExercises] = useState([]);
@@ -57,11 +55,13 @@ function Content() {
   useEffect(() => {
     getData(`users/${user.uid}/exercises`, setExercises);
     getData(`users/${user.uid}/exercisesSets`, setSets);
+
+    setUserName(user.displayName);
   }, [user]);
 
   useEffect(() => {
-    setUserName(user.displayName);
-  }, [user]);
+    dispatch(setExercisesRedux(exercises));
+  }, [exercises]);
 
   // HOME CONTAINER MAX HEIGHT
   const headerContainer = useRef();
@@ -78,24 +78,11 @@ function Content() {
   }, [exercises]);
 
   // NAV FUNCTIONALITY
-  const exercisesWrapper = useRef();
-  const exercisesSetWrapper = useRef();
-
   const [selectedLink, setSelectedLink] = useState("exercisesLink");
 
   const handleLink = (e) => {
     setSelectedLink(e.target.value);
   };
-
-  useEffect(() => {
-    if (exercises.length > 0) {
-      if (selectedLink === "exercisesLink") {
-        fadeInTransition(exercisesWrapper.current);
-      } else if (selectedLink === "exerciseSetsLink") {
-        fadeInTransition(exercisesSetWrapper.current);
-      }
-    }
-  }, [selectedLink]);
   return (
     <>
       <Nav
@@ -144,49 +131,77 @@ function Content() {
               </label>
             </div>
           </div>
-          {/* {data.length !== 0 && ( */}
           <div ref={homeContainer} className={home.home__main}>
             {selectedLink === "exercisesLink" && (
-              <div ref={exercisesWrapper} className={btnStyles.entry__wrapper}>
-                {exercises.map((exercise) => (
-                  <div
-                    onClick={() => {
-                      dispatch(setSelectedExercise(exercise));
-                      dispatch(setPopupType("exerciseOptions"));
-                    }}
-                    className={btnStyles.entry__btn}
-                    key={exercise.id}
-                  >
-                    <span className={btnStyles.entry__btn__name}>{exercise.data.exerciseName}</span>
-                    <span className={btnStyles.entry__btn__details}>
-                      ({exercise.data.rm + "rm, " + exercise.data.weight + "kg"})
-                    </span>
-                  </div>
-                ))}
-              </div>
+              <ExercisesWrapper exercises={exercises} user={user} />
             )}
-            {selectedLink === "exerciseSetsLink" && (
-              <div ref={exercisesSetWrapper} className={btnStyles.entry__wrapper}>
-                {sets.map((set) => (
-                  <div
-                    onClick={() => {
-                      dispatch(setSelectedExerciseSet(set));
-                      dispatch(setPopupType("exerciseSetOptions"));
-                    }}
-                    className={btnStyles.entry__btn}
-                    key={set.id}
-                  >
-                    <span className={btnStyles.entry__btn__name}>{set.data.exerciseSetName}</span>
-                    <span className={btnStyles.entry__btn__details}>
-                      ({set.data.routine + ", " + set.data.volume})
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
+            {selectedLink === "exerciseSetsLink" && <ExercisesSetWrapper sets={sets} />}
           </div>
         </div>
       </section>
     </>
+  );
+}
+function ExercisesWrapper({ exercises }) {
+  const dispatch = useDispatch();
+
+  useLayoutEffect(() => {
+    fadeInTransition(exercisesWrapper.current);
+    return () => {
+      fadeOutTransition(exercisesWrapper.current);
+    };
+  }, []);
+
+  const exercisesWrapper = useRef();
+  return (
+    <div ref={exercisesWrapper} className={btnStyles.entry__wrapper}>
+      {exercises.map((exercise) => (
+        <div
+          onClick={() => {
+            dispatch(setSelectedExercise(exercise));
+            dispatch(setPopupType("exerciseOptions"));
+          }}
+          className={btnStyles.entry__btn}
+          key={exercise.id}
+        >
+          <span className={btnStyles.entry__btn__name}>{exercise.data.exerciseName}</span>
+          <span className={btnStyles.entry__btn__details}>
+            ({exercise.data.rm + "rm, " + exercise.data.weight + "kg"})
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ExercisesSetWrapper({ sets }) {
+  const dispatch = useDispatch();
+
+  useLayoutEffect(() => {
+    fadeInTransition(exercisesSetWrapper.current);
+    return () => {
+      fadeOutTransition(exercisesSetWrapper.current);
+    };
+  }, []);
+
+  const exercisesSetWrapper = useRef();
+  return (
+    <div ref={exercisesSetWrapper} className={btnStyles.entry__wrapper}>
+      {sets.map((set) => (
+        <div
+          onClick={() => {
+            dispatch(setSelectedExerciseSet(set));
+            dispatch(setPopupType("exerciseSetOptions"));
+          }}
+          className={btnStyles.entry__btn}
+          key={set.id}
+        >
+          <span className={btnStyles.entry__btn__name}>{set.data.exerciseSetName}</span>
+          <span className={btnStyles.entry__btn__details}>
+            ({set.data.routine + ", " + set.data.volume})
+          </span>
+        </div>
+      ))}
+    </div>
   );
 }

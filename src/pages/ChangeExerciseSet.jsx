@@ -11,13 +11,19 @@ import home from "../css/home.module.css";
 // firebase crud
 import { addDoc, collection, query, getDocs } from "firebase/firestore";
 import { db, auth } from "../firebase-config";
+import { updateExerciseSet } from "../firebase-config";
 // components
 import Nav from "../components/Nav";
 // auth
 import { useUserAuth } from "../hooks/UserAuthContext";
+// redux
+import { useSelector } from "react-redux";
 
-function CreateExerciseSet() {
+function ChangeExerciseSet() {
   const { user } = useUserAuth();
+
+  const selectedExerciseSet = useSelector((state) => state.selectedExerciseSet);
+
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -35,12 +41,13 @@ function CreateExerciseSet() {
   }, []);
 
   const [exerciseSetData, setExerciseSetData] = useState({
-    exerciseSetName: "",
-    routine: "",
-    volume: "",
+    exerciseSetName: selectedExerciseSet.exerciseSetName,
+    routine: selectedExerciseSet.routine,
+    selectedExercises: selectedExerciseSet.selectedExercises,
+    volume: selectedExerciseSet.volume,
   });
 
-  const { exerciseSetName, routine, volume } = exerciseSetData;
+  const { exerciseSetName, routine, volume, selectedExercises } = exerciseSetData;
 
   const navigate = useNavigate();
 
@@ -52,15 +59,19 @@ function CreateExerciseSet() {
   };
 
   // SELECTED EXERCISE HANDLER
-  const [selectedExercises, setSelectedExercises] = useState([]);
+  // const [selectedExercises, setSelectedExercises] = useState([]);
 
   const checkboxHandler = (e) => {
     if (e.target.checked === true) {
-      setSelectedExercises([...selectedExercises, e.target.value]);
+      setExerciseSetData((prevState) => ({
+        ...prevState,
+        [e.target.name]: [...selectedExercises, e.target.value],
+      }));
     } else {
-      setSelectedExercises([
-        ...selectedExercises.filter((exercise) => exercise !== e.target.value),
-      ]);
+      setExerciseSetData((prevState) => ({
+        ...prevState,
+        [e.target.name]: [...selectedExercises.filter((exercise) => exercise !== e.target.value)],
+      }));
     }
   };
 
@@ -77,7 +88,6 @@ function CreateExerciseSet() {
     }
   };
   // SUBMIT
-  const exerciseSetCollectionRef = collection(db, `users/${auth.currentUser.uid}/exercisesSets`);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -92,7 +102,7 @@ function CreateExerciseSet() {
     };
 
     if (canProceed) {
-      await addDoc(exerciseSetCollectionRef, {
+      await updateExerciseSet(selectedExerciseSet._id, {
         data,
       }).then(() => {
         navigateOutFunction("/home");
@@ -157,6 +167,7 @@ function CreateExerciseSet() {
                   type="radio"
                   value="fullbody"
                   name="routine"
+                  checked={routine === "fullbody"}
                   className={styles.form__control__radio}
                 />
               </div>
@@ -169,6 +180,7 @@ function CreateExerciseSet() {
                   type="radio"
                   value="upper split"
                   name="routine"
+                  checked={routine === "upper split"}
                   className={styles.form__control__radio}
                 />
               </div>
@@ -181,6 +193,7 @@ function CreateExerciseSet() {
                   type="radio"
                   value="lower split"
                   name="routine"
+                  checked={routine === "lower split"}
                   className={styles.form__control__radio}
                 />
               </div>
@@ -193,6 +206,7 @@ function CreateExerciseSet() {
                   type="radio"
                   value="push"
                   name="routine"
+                  checked={routine === "push"}
                   className={styles.form__control__radio}
                 />
               </div>
@@ -205,6 +219,7 @@ function CreateExerciseSet() {
                   type="radio"
                   value="pull"
                   name="routine"
+                  checked={routine === "pull"}
                   className={styles.form__control__radio}
                 />
               </div>
@@ -217,6 +232,7 @@ function CreateExerciseSet() {
                   type="radio"
                   value="legs"
                   name="routine"
+                  checked={routine === "legs"}
                   className={styles.form__control__radio}
                 />
               </div>
@@ -237,7 +253,8 @@ function CreateExerciseSet() {
                     onChange={checkboxHandler}
                     type="checkbox"
                     value={exercise.id}
-                    name="exercise"
+                    name="selectedExercises"
+                    checked={selectedExercises.includes(exercise.id)}
                     className={styles.form__control__radio}
                   />
                 </div>
@@ -255,7 +272,7 @@ function CreateExerciseSet() {
               <span>Cancel</span>
             </button>
             <button type="submit" className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}>
-              <span>Create</span>
+              <span>Edit</span>
             </button>
           </div>
         </form>
@@ -264,4 +281,4 @@ function CreateExerciseSet() {
   );
 }
 
-export default CreateExerciseSet;
+export default ChangeExerciseSet;

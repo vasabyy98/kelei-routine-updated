@@ -13,6 +13,7 @@ import Home from "./pages/Home";
 import CreateExercise from "./pages/CreateExercise";
 import CreateExerciseSet from "./pages/CreateExerciseSet";
 import ChangeExercise from "./pages/ChangeExercise";
+import ChangeExerciseSet from "./pages/ChangeExerciseSet";
 import RepCounter from "./pages/RepCounter";
 // redux
 import { store } from "./app/store";
@@ -56,6 +57,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             element={
               <ProtectedRoute>
                 <CreateExerciseSet />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/change-exerciseset"
+            element={
+              <ProtectedRoute>
+                <ChangeExerciseSet />
               </ProtectedRoute>
             }
           />

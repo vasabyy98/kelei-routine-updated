@@ -97,13 +97,13 @@ function RepCounter() {
           volumeAnimationNumber.current,
           {
             innerText: completedReps,
-            duration: completedReps / 10,
+            duration: 3,
             snap: {
               innerText: 1,
             },
             onComplete: () => {
               setTimeout(() => {
-                navigate("/home");
+                navigateOutFunction("/home");
               }, 500);
             },
           },
@@ -119,7 +119,13 @@ function RepCounter() {
     // dispatch(setExerciseCompleted(id));
     // navigate("/choose-exercise");
   };
-
+  // smooth navigate out func
+  const navigateOutFunction = (url) => {
+    const navigateFunc = () => {
+      navigate(url);
+    };
+    fadeOutPageTransition(navigateFunc);
+  };
   return (
     <>
       <section className={layout.content__wrapper}>
