@@ -58,13 +58,13 @@
 .form__control {
   position: relative;
   display: block;
-  padding: 1rem;
+  padding: 1rem 0;
   border-bottom: 1px solid var(--stroke-color);
   transition: 0.3s ease-out;
 }
-.form__control[type="text"],
-.form__control[type="number"] {
-  padding: 1rem 0;
+.form__control[type="checkbox"],
+.form__control[type="radio"] {
+  padding: 1rem;
 }
 .form__control__selected {
   position: absolute;

@@ -116,7 +116,6 @@ h2 {
   #root {
     width: 500px;
     min-height: 100vh;
-    border-radius: 1.5rem;
   }
   .content__wrapper {
     min-height: 100vh;

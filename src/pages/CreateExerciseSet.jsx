@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
+import React, { useState, useRef, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // utils
 import { fadeInPageTransition, fadeOutPageTransition } from "../utils/animations/pageTransition";
@@ -8,27 +8,16 @@ import btnStyles from "../css/btns.module.css";
 import header from "../css/header.module.css";
 import styles from "../css/signin.module.css";
 import home from "../css/home.module.css";
-// firebase crud
-import { addDoc, collection, query, getDocs } from "firebase/firestore";
-import { db, auth } from "../firebase-config";
-// components
-import Nav from "../components/Nav";
+// redux
+import { useDispatch, useSelector } from "react-redux";
+import { createSet } from "../features/exercisesSetsSlice";
 // auth
 import { useUserAuth } from "../hooks/UserAuthContext";
 
 function CreateExerciseSet() {
+  const { exercises } = useSelector((state) => state.exercises);
   const { user } = useUserAuth();
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    const q = query(collection(db, `users/${user.uid}/exercises`));
-
-    (async () => {
-      const data = await getDocs(q);
-
-      setData(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    })();
-  }, [user]);
+  const dispatch = useDispatch();
 
   useLayoutEffect(() => {
     fadeInPageTransition();
@@ -77,8 +66,6 @@ function CreateExerciseSet() {
     }
   };
   // SUBMIT
-  const exerciseSetCollectionRef = collection(db, `users/${auth.currentUser.uid}/exercisesSets`);
-
   const onSubmit = async (e) => {
     e.preventDefault();
 
@@ -92,11 +79,7 @@ function CreateExerciseSet() {
     };
 
     if (canProceed) {
-      await addDoc(exerciseSetCollectionRef, {
-        data,
-      }).then(() => {
-        navigateOutFunction("/home");
-      });
+      dispatch(createSet({ data, user })).then(() => navigateOutFunction("/home"));
     }
   };
 
@@ -225,7 +208,7 @@ function CreateExerciseSet() {
               <header className={header.header}>
                 <h3 className={`${header.heading__h3}`}>Select exercises</h3>
               </header>
-              {data.map((exercise) => (
+              {exercises.map((exercise) => (
                 <div key={exercise.id} className={`${styles.form__group} `}>
                   <div className={`${styles.form__control}`}>
                     <span className={btnStyles.entry__btn__name}>{exercise.data.exerciseName}</span>

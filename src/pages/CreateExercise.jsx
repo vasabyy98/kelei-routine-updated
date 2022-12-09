@@ -6,23 +6,26 @@ import { fadeInPageTransition, fadeOutPageTransition } from "../utils/animations
 import layout from "../css/layout.module.css";
 import btnStyles from "../css/btns.module.css";
 import header from "../css/header.module.css";
-import nav from "../css/nav.module.css";
 import styles from "../css/signin.module.css";
-// firebase crud
+// auth
 import { useUserAuth } from "../hooks/UserAuthContext";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { addDoc, collection } from "firebase/firestore";
-import { db, auth } from "../firebase-config";
-// components
-import Nav from "../components/Nav";
+// redux
+import { createNewExercise } from "../features/exercisesSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 function CreateExercise() {
-  // const [user, loading, error] = useAuthState(auth);
   const { user } = useUserAuth();
+  const dispatch = useDispatch();
 
   useLayoutEffect(() => {
     fadeInPageTransition();
   }, []);
+
+  const { exercises } = useSelector((state) => state.exercises);
+
+  useEffect(() => {
+    // navigateOutFunction("/home");
+  }, [exercises]);
 
   const [exerciseData, setExerciseData] = useState({
     exerciseName: "",
@@ -40,8 +43,6 @@ function CreateExercise() {
       [e.target.name]: e.target.value,
     }));
   };
-
-  const exerciseCollectionRef = collection(db, `users/${user.uid}/exercises`);
 
   const exerciseNameInput = useRef();
   const weightInput = useRef();
@@ -69,12 +70,11 @@ function CreateExercise() {
       rm,
     };
 
+    const result = { data, user };
+
     if (canProceed) {
-      await addDoc(exerciseCollectionRef, {
-        data,
-      }).then(() => {
-        navigateOutFunction("/home");
-      });
+      dispatch(createNewExercise(result));
+      navigateOutFunction("/home");
     }
   };
 

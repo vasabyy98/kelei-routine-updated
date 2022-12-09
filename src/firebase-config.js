@@ -1,11 +1,5 @@
 import { initializeApp } from "firebase/app";
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  updateProfile,
-} from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import {
   getFirestore,
   query,
@@ -13,10 +7,8 @@ import {
   collection,
   where,
   addDoc,
-  setDoc,
   doc,
   deleteDoc,
-  QuerySnapshot,
   updateDoc,
 } from "firebase/firestore";
 
@@ -34,20 +26,29 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const getData = (url, stateFunc) => {
+// test get data - exercises or exercise sets
+const getData = async (url) => {
   const q = query(collection(db, url));
 
-  (async () => {
-    const data = await getDocs(q);
+  const data = await getDocs(q);
 
-    stateFunc(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-  })();
+  return data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
 };
 
-const deleteExercise = async (exerciseId) => {
+//create exercise
+const createNew = async (url, data) => {
+  const ref = collection(db, url);
+
+  await addDoc(ref, (data = { data }));
+
+  return data;
+};
+
+// delete exercise and all of its references in exercise sets collection
+const deleteExerciseData = async (exerciseId) => {
   const docRef = doc(db, `users/${auth.currentUser.uid}/exercises`, exerciseId);
 
-  deleteDoc(docRef);
+  await deleteDoc(docRef).then(() => console.log("deleted"));
 
   // get exerciseSets collections' docs containing exercise id
   const excRef = query(collection(db, `users/${auth.currentUser.uid}/exercisesSets`));
@@ -62,37 +63,45 @@ const deleteExercise = async (exerciseId) => {
 
       data.selectedExercises = data.selectedExercises.filter((exercise) => exercise !== exerciseId);
 
-      updateDoc(doc.ref, { data }).catch((error) => {
-        console.log(error);
-      });
+      updateDoc(doc.ref, { data });
     });
   })();
+
+  return exerciseId;
 };
 
-const updateExercise = async (exerciseId, updatedData) => {
+const editExercise = async (exerciseId, updatedData) => {
   const docRef = doc(db, `users/${auth.currentUser.uid}/exercises`, exerciseId);
 
   const data = updatedData;
 
-  updateDoc(docRef, { data }).catch((error) => {
-    console.log(error);
-  });
+  updateDoc(docRef, { data });
 };
 
 const deleteExerciseSet = async (exerciseSetId) => {
   const docRef = doc(db, `users/${auth.currentUser.uid}/exercisesSets`, exerciseSetId);
 
   deleteDoc(docRef);
+
+  return exerciseSetId;
 };
 
-const updateExerciseSet = async (exerciseSetId, updatedData) => {
+const editExerciseSet = async (exerciseSetId, updatedData) => {
+  console.log(exerciseSetId, updatedData);
   const docRef = doc(db, `users/${auth.currentUser.uid}/exercisesSets`, exerciseSetId);
 
   const data = updatedData;
 
-  updateDoc(docRef, data).catch((error) => {
-    console.log(error);
-  });
+  updateDoc(docRef, { data });
 };
 
-export { auth, db, getData, deleteExercise, updateExercise, deleteExerciseSet, updateExerciseSet };
+export {
+  auth,
+  db,
+  getData,
+  deleteExerciseData,
+  editExercise,
+  deleteExerciseSet,
+  editExerciseSet,
+  createNew,
+};

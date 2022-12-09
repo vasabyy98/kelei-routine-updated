@@ -24,7 +24,7 @@ export const getGreeting = () => {
     return "Good afternoon,";
   } else if (currentTime >= eveningStart && currentTime <= eveningEnd) {
     return "Good evening,";
-  } else if (currentTime >= nightStart && currentTime <= nightEnd) {
+  } else {
     return "Welcome,";
   }
 };

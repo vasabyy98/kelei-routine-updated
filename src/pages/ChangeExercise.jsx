@@ -6,20 +6,13 @@ import { fadeInPageTransition, fadeOutPageTransition } from "../utils/animations
 import layout from "../css/layout.module.css";
 import btnStyles from "../css/btns.module.css";
 import header from "../css/header.module.css";
-import nav from "../css/nav.module.css";
 import styles from "../css/signin.module.css";
-// firebase crud
-import { updateExercise } from "../firebase-config";
-import { useUserAuth } from "../hooks/UserAuthContext";
-import { addDoc, collection } from "firebase/firestore";
-import { db } from "../firebase-config";
-// components
-import Nav from "../components/Nav";
 // redux
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { editExerciseData } from "../features/exercisesSlice";
 
 function ChangeExercise() {
-  const { user } = useUserAuth();
+  const dispatch = useDispatch();
   const exercise = useSelector((state) => state.selectedExercise);
 
   useLayoutEffect(() => {
@@ -69,10 +62,10 @@ function ChangeExercise() {
       rm,
     };
 
+    const id = exercise._id;
+
     if (canProceed) {
-      await updateExercise(exercise._id, data).then(() => {
-        navigateOutFunction("/home");
-      });
+      dispatch(editExerciseData({ id, data })).then(() => navigateOutFunction("/home"));
     }
   };
 

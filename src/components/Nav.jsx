@@ -18,24 +18,15 @@ import nav from "../css/nav.module.css";
 // redux
 import { useDispatch, useSelector } from "react-redux";
 import { setPopupType, resetPopupType } from "../features/popupActionsType";
-// firestore crud
-import { deleteExercise, deleteExerciseSet } from "../firebase-config";
+import { deleteExercise, getExercises } from "../features/exercisesSlice";
+import { deleteSet } from "../features/exercisesSetsSlice";
 
-function Nav({
-  homebtn,
-  signoutBtn,
-  backBtn,
-  backBtnUrl,
-  addBtn,
-  setExercises,
-  exercises,
-  sets,
-  setSets,
-}) {
+function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { logOut } = useUserAuth();
+  const { user } = useUserAuth();
 
   const popupType = useSelector((state) => state.popupActionType.popupType);
   const selectedExercise = useSelector((state) => state.selectedExercise);
@@ -84,6 +75,8 @@ function Nav({
       setAddWrapperVisible(true);
     } else if (popupType === "addEntry") {
       setAddWrapperVisible(true);
+    } else {
+      setAddWrapperVisible(false);
     }
   }, [popupType]);
 
@@ -99,15 +92,11 @@ function Nav({
     logOut();
     navigateOutFunction("/");
   };
-  // onExerciseDelete
+  // delete exercise
   const onDeleteExercise = () => {
-    deleteExercise(selectedExercise._id);
-    setExercises([...exercises.filter((exercise) => exercise.id !== selectedExercise._id)]);
-
-    setTimeout(() => {
-      setAddWrapperVisible(false);
-      dispatch(resetPopupType());
-    }, 300);
+    dispatch(deleteExercise(selectedExercise._id))
+      .then(() => dispatch(getExercises(user)))
+      .then(() => dispatch(resetPopupType()));
   };
   // open exercise rep counter page
   const onStartWorkout = () => {
@@ -127,13 +116,9 @@ function Nav({
   };
   // delete exercise set
   const onDeleteExerciseSet = () => {
-    deleteExerciseSet(selectedExerciseSet._id);
-    setSets([...sets.filter((set) => set.id !== selectedExerciseSet._id)]);
-
-    setTimeout(() => {
-      setAddWrapperVisible(false);
-      dispatch(resetPopupType());
-    }, 300);
+    dispatch(deleteSet(selectedExerciseSet._id))
+      .then(() => setAddWrapperVisible(false))
+      .then(() => dispatch(resetPopupType()));
   };
   // edit exercise set
   const onEditExerciseSet = () => {

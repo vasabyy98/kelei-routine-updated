@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
-import { useNavigate } from "react-router-dom";
 // utils
 import {
   fadeInPageTransition,
-  fadeOutPageTransition,
   fadeOutTransition,
   fadeInTransition,
 } from "../utils/animations/pageTransition";
@@ -22,11 +20,12 @@ import nav from "../css/nav.module.css";
 // components
 import Nav from "../components/Nav";
 // redux
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setSelectedExercise } from "../features/selectedExerciseSlice";
 import { setSelectedExerciseSet } from "../features/selectedExerciseSetSlice";
 import { setPopupType } from "../features/popupActionsType";
-import { setExercisesRedux } from "../features/exercisesSlice";
+import { getExercises } from "../features/exercisesSlice";
+import { getSets } from "../features/exercisesSetsSlice";
 
 function Home() {
   const { user } = useUserAuth();
@@ -49,19 +48,19 @@ function Content() {
   const dispatch = useDispatch();
 
   const [userName, setUserName] = useState("User");
-  const [exercises, setExercises] = useState([]);
-  const [sets, setSets] = useState([]);
+  const { exercises } = useSelector((state) => state.exercises);
+  const { exercisesSets } = useSelector((state) => state.exercisesSets);
 
   useEffect(() => {
-    getData(`users/${user.uid}/exercises`, setExercises);
-    getData(`users/${user.uid}/exercisesSets`, setSets);
-
     setUserName(user.displayName);
   }, [user]);
 
   useEffect(() => {
-    dispatch(setExercisesRedux(exercises));
-  }, [exercises]);
+    if (user.uid !== undefined) {
+      dispatch(getExercises(user));
+      dispatch(getSets(user));
+    }
+  }, [user, dispatch]);
 
   // HOME CONTAINER MAX HEIGHT
   const headerContainer = useRef();
@@ -85,14 +84,7 @@ function Content() {
   };
   return (
     <>
-      <Nav
-        signoutBtn={true}
-        addBtn={true}
-        setExercises={setExercises}
-        exercises={exercises}
-        sets={sets}
-        setSets={setSets}
-      />
+      <Nav signoutBtn={true} addBtn={true} />
       <div className={home.backgroundImage}></div>
       <section className={layout.content__wrapper}>
         <div className={layout.threeRow__grid__layout}>
@@ -132,10 +124,10 @@ function Content() {
             </div>
           </div>
           <div ref={homeContainer} className={home.home__main}>
-            {selectedLink === "exercisesLink" && (
-              <ExercisesWrapper exercises={exercises} user={user} />
+            {selectedLink === "exercisesLink" && <ExercisesWrapper exercises={exercises} />}
+            {selectedLink === "exerciseSetsLink" && (
+              <ExercisesSetWrapper exercisesSets={exercisesSets} />
             )}
-            {selectedLink === "exerciseSetsLink" && <ExercisesSetWrapper sets={sets} />}
           </div>
         </div>
       </section>
@@ -174,7 +166,7 @@ function ExercisesWrapper({ exercises }) {
   );
 }
 
-function ExercisesSetWrapper({ sets }) {
+function ExercisesSetWrapper({ exercisesSets }) {
   const dispatch = useDispatch();
 
   useLayoutEffect(() => {
@@ -187,7 +179,7 @@ function ExercisesSetWrapper({ sets }) {
   const exercisesSetWrapper = useRef();
   return (
     <div ref={exercisesSetWrapper} className={btnStyles.entry__wrapper}>
-      {sets.map((set) => (
+      {exercisesSets.map((set) => (
         <div
           onClick={() => {
             dispatch(setSelectedExerciseSet(set));

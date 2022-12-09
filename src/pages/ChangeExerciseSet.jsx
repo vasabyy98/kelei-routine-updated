@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
+import React, { useState, useRef, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // utils
 import { fadeInPageTransition, fadeOutPageTransition } from "../utils/animations/pageTransition";
@@ -8,33 +8,14 @@ import btnStyles from "../css/btns.module.css";
 import header from "../css/header.module.css";
 import styles from "../css/signin.module.css";
 import home from "../css/home.module.css";
-// firebase crud
-import { addDoc, collection, query, getDocs } from "firebase/firestore";
-import { db, auth } from "../firebase-config";
-import { updateExerciseSet } from "../firebase-config";
-// components
-import Nav from "../components/Nav";
-// auth
-import { useUserAuth } from "../hooks/UserAuthContext";
 // redux
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { editSet } from "../features/exercisesSetsSlice";
 
 function ChangeExerciseSet() {
-  const { user } = useUserAuth();
-
   const selectedExerciseSet = useSelector((state) => state.selectedExerciseSet);
-
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    const q = query(collection(db, `users/${user.uid}/exercises`));
-
-    (async () => {
-      const data = await getDocs(q);
-
-      setData(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    })();
-  }, [user]);
+  const dispatch = useDispatch();
+  const { exercises } = useSelector((state) => state.exercises);
 
   useLayoutEffect(() => {
     fadeInPageTransition();
@@ -101,12 +82,10 @@ function ChangeExerciseSet() {
       selectedExercises,
     };
 
+    const id = selectedExerciseSet._id;
+
     if (canProceed) {
-      await updateExerciseSet(selectedExerciseSet._id, {
-        data,
-      }).then(() => {
-        navigateOutFunction("/home");
-      });
+      dispatch(editSet({ id, data })).then(() => navigateOutFunction("/home"));
     }
   };
 
@@ -241,7 +220,7 @@ function ChangeExerciseSet() {
               <header className={header.header}>
                 <h3 className={`${header.heading__h3}`}>Select exercises</h3>
               </header>
-              {data.map((exercise) => (
+              {exercises.map((exercise) => (
                 <div key={exercise.id} className={`${styles.form__group} `}>
                   <div className={`${styles.form__control}`}>
                     <span className={btnStyles.entry__btn__name}>{exercise.data.exerciseName}</span>
