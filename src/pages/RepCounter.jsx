@@ -1,14 +1,8 @@
-import React, { useEffect, useState, useRef, useLayoutEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState, useRef, useLayoutEffect } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-// import { setExerciseCompleted } from "../features/exercises/completedExerciseSlice";
 // utils
-import {
-  fadeInPageTransition,
-  fadeOutPageTransition,
-  fadeOutTransition,
-  fadeInTransition,
-} from "../utils/animations/pageTransition";
+import { fadeInPageTransition, fadeOutPageTransition } from "../utils/animations/pageTransition";
 // gsap
 import { gsap } from "gsap";
 // css
@@ -23,8 +17,8 @@ function RepCounter() {
   }, []);
 
   const selectedExercise = useSelector((state) => state.selectedExercise);
+  const { volume } = useSelector((state) => state.selectedExerciseSet);
 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [completedReps, setCompletedReps] = useState(0);
@@ -102,9 +96,15 @@ function RepCounter() {
               innerText: 1,
             },
             onComplete: () => {
-              setTimeout(() => {
-                navigateOutFunction("/home");
-              }, 500);
+              if (volume === "") {
+                setTimeout(() => {
+                  navigateOutFunction("/home");
+                }, 250);
+              } else {
+                setTimeout(() => {
+                  navigateOutFunction("/select-exercise");
+                }, 250);
+              }
             },
           },
           "+1"
@@ -112,13 +112,6 @@ function RepCounter() {
     }, actionContainer);
   };
 
-  // on finish btn press
-  const onFinish = () => {
-    finishAnimation();
-
-    // dispatch(setExerciseCompleted(id));
-    // navigate("/choose-exercise");
-  };
   // smooth navigate out func
   const navigateOutFunction = (url) => {
     const navigateFunc = () => {
@@ -164,13 +157,24 @@ function RepCounter() {
                     <span>Current set:</span>
                     <span style={{ textTransform: "capitalize" }}>{currentSet}</span>
                   </div>
-                  <div className={`${styles.exercise__inner}`}>
-                    <span>Completed reps:</span>
-                    <span style={{ textTransform: "capitalize" }}>
-                      {completedReps}
-                      <span style={{ textTransform: "uppercase" }}></span>
-                    </span>
-                  </div>
+                  {volume === "" ? (
+                    <div className={`${styles.exercise__inner}`}>
+                      <span>Completed reps:</span>
+                      <span style={{ textTransform: "capitalize" }}>
+                        {completedReps}
+                        <span style={{ textTransform: "uppercase" }}></span>
+                      </span>
+                    </div>
+                  ) : (
+                    <div className={`${styles.exercise__inner}`}>
+                      <span>Completed reps:</span>
+                      <span style={{ textTransform: "capitalize" }}>
+                        {completedReps}
+                        {"/" + volume}
+                        <span style={{ textTransform: "uppercase" }}></span>
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <div className={styles.exercise__reps}>{currentReps}</div>
                 <div style={{ marginBottom: "0" }} className={btnStyles.btns__row}>
@@ -192,7 +196,10 @@ function RepCounter() {
             </div>
           </div>
           <div className={btnStyles.btns__row}>
-            <button onClick={onFinish} className={`${btnStyles.btn} ${btnStyles.secondaryBtn}`}>
+            <button
+              onClick={finishAnimation}
+              className={`${btnStyles.btn} ${btnStyles.secondaryBtn}`}
+            >
               <span>Finish</span>
             </button>
             <button onClick={nextSetHandler} className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}>

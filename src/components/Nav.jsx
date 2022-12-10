@@ -20,6 +20,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPopupType, resetPopupType } from "../features/popupActionsType";
 import { deleteExercise, getExercises } from "../features/exercisesSlice";
 import { deleteSet } from "../features/exercisesSetsSlice";
+import { resetSelectedExercise } from "../features/selectedExerciseSlice";
+import { resetSelectedExerciseSet } from "../features/selectedExerciseSetSlice";
 
 function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
   const navigate = useNavigate();
@@ -102,7 +104,6 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
   const onStartWorkout = () => {
     navigateOutFunction("/rep-counter");
     setTimeout(() => {
-      setAddWrapperVisible(false);
       dispatch(resetPopupType());
     }, 300);
   };
@@ -110,31 +111,42 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
   const onEditExercise = () => {
     navigateOutFunction("/change-exercise");
     setTimeout(() => {
-      setAddWrapperVisible(false);
       dispatch(resetPopupType());
     }, 300);
   };
   // delete exercise set
   const onDeleteExerciseSet = () => {
     dispatch(deleteSet(selectedExerciseSet._id))
-      .then(() => setAddWrapperVisible(false))
+      // .then(() => setAddWrapperVisible(false))
       .then(() => dispatch(resetPopupType()));
   };
   // edit exercise set
   const onEditExerciseSet = () => {
     navigateOutFunction("/change-exerciseset");
     setTimeout(() => {
-      setAddWrapperVisible(false);
       dispatch(resetPopupType());
     }, 300);
   };
-  // create exercise
+  // create exercise or set
   const onCreate = (url) => {
     navigateOutFunction(url);
     setTimeout(() => {
-      setAddWrapperVisible(false);
       dispatch(resetPopupType());
     }, 300);
+  };
+
+  // on exercise set start workout
+  const onSetClick = () => {
+    navigateOutFunction("/select-exercise");
+    setTimeout(() => {
+      dispatch(resetPopupType());
+    }, 300);
+  };
+
+  const hideOptions = () => {
+    dispatch(resetSelectedExercise());
+    dispatch(resetSelectedExerciseSet());
+    dispatch(resetPopupType());
   };
   return (
     <>
@@ -155,7 +167,7 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
                 <span>Exercise Set</span>
               </button>
               <button
-                onClick={() => setAddWrapperVisible(false)}
+                onClick={hideOptions}
                 className={`${btnStyles.btn} ${btnStyles.secondaryBtn}`}
               >
                 <span>Nothing</span>
@@ -183,12 +195,7 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
                 <span>Start workout</span>
               </button>
               <button
-                onClick={() => {
-                  setAddWrapperVisible(false);
-                  setTimeout(() => {
-                    dispatch(resetPopupType());
-                  }, 300);
-                }}
+                onClick={hideOptions}
                 className={`${btnStyles.btn} ${btnStyles.secondaryBtn}`}
               >
                 <span>Nothing</span>
@@ -209,19 +216,11 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
               >
                 <span>Delete</span>
               </button>
-              <button
-                // onClick={onStartWorkout}
-                className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
-              >
+              <button onClick={onSetClick} className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}>
                 <span>Start workout</span>
               </button>
               <button
-                onClick={() => {
-                  setAddWrapperVisible(false);
-                  setTimeout(() => {
-                    dispatch(resetPopupType());
-                  }, 300);
-                }}
+                onClick={hideOptions}
                 className={`${btnStyles.btn} ${btnStyles.secondaryBtn}`}
               >
                 <span>Nothing</span>

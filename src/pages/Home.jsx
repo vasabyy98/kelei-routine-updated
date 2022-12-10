@@ -21,8 +21,11 @@ import nav from "../css/nav.module.css";
 import Nav from "../components/Nav";
 // redux
 import { useDispatch, useSelector } from "react-redux";
-import { setSelectedExercise } from "../features/selectedExerciseSlice";
-import { setSelectedExerciseSet } from "../features/selectedExerciseSetSlice";
+import { setSelectedExercise, resetSelectedExercise } from "../features/selectedExerciseSlice";
+import {
+  setSelectedExerciseSet,
+  resetSelectedExerciseSet,
+} from "../features/selectedExerciseSetSlice";
 import { setPopupType } from "../features/popupActionsType";
 import { getExercises } from "../features/exercisesSlice";
 import { getSets } from "../features/exercisesSetsSlice";
@@ -59,6 +62,9 @@ function Content() {
     if (user.uid !== undefined) {
       dispatch(getExercises(user));
       dispatch(getSets(user));
+
+      dispatch(resetSelectedExercise());
+      dispatch(resetSelectedExerciseSet());
     }
   }, [user, dispatch]);
 
