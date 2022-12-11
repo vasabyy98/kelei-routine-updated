@@ -2,8 +2,6 @@ import React, { useState, useLayoutEffect, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // utils
 import { fadeInPageTransition, fadeOutPageTransition } from "../utils/animations/pageTransition";
-// hooks
-import { useUserAuth } from "../hooks/UserAuthContext";
 // css
 import layout from "../css/layout.module.css";
 import styles from "../css/signin.module.css";
@@ -11,6 +9,9 @@ import header from "../css/header.module.css";
 import btnStyles from "../css/btns.module.css";
 // components
 import Nav from "../components/Nav";
+// redux
+import { login } from "../features/authSlice";
+import { useSelector, useDispatch } from "react-redux";
 
 function Login() {
   useLayoutEffect(() => {
@@ -25,7 +26,8 @@ function Login() {
   const [error, setError] = useState("");
   const { email, password } = formData;
 
-  const { user, logIn } = useUserAuth();
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (user) {
@@ -45,7 +47,7 @@ function Login() {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    logIn(email, password);
+    dispatch(login({ email, password }));
   };
 
   const navigateOutFunction = (url) => {

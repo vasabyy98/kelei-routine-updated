@@ -3,8 +3,6 @@ import React, { useState, useLayoutEffect, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // utils
 import { fadeInPageTransition, fadeOutPageTransition } from "../utils/animations/pageTransition";
-// hooks
-import { useUserAuth } from "../hooks/UserAuthContext";
 // css
 import layout from "../css/layout.module.css";
 import styles from "../css/signin.module.css";
@@ -12,6 +10,9 @@ import header from "../css/header.module.css";
 import btnStyles from "../css/btns.module.css";
 // components
 import Nav from "../components/Nav";
+// redux
+import { register } from "../features/authSlice";
+import { useSelector, useDispatch } from "react-redux";
 
 function Login() {
   useLayoutEffect(() => {
@@ -25,10 +26,10 @@ function Login() {
   });
 
   const { email, password, name } = formData;
-  const { user, signUp } = useUserAuth();
-  const [error, setError] = useState("");
+  const { user } = useSelector((state) => state.auth);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const onChange = (e) => {
     setFormData((prevState) => ({
@@ -40,7 +41,7 @@ function Login() {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    signUp(name, email, password);
+    dispatch(register({ name, email, password }));
   };
 
   useEffect(() => {
@@ -57,7 +58,6 @@ function Login() {
   };
   return (
     <>
-      {error}
       <Nav backBtn={true} backBtnUrl={"/login"} />
       <section className={layout.content__wrapper}>
         <form onSubmit={onSubmit} className={`${styles.form} ${layout.twoRow__grid__layout}`}>

@@ -7,14 +7,12 @@ import layout from "../css/layout.module.css";
 import btnStyles from "../css/btns.module.css";
 import header from "../css/header.module.css";
 import styles from "../css/signin.module.css";
-// auth
-import { useUserAuth } from "../hooks/UserAuthContext";
 // redux
 import { createNewExercise } from "../features/exercisesSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 function CreateExercise() {
-  const { user } = useUserAuth();
+  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useLayoutEffect(() => {

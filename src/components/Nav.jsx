@@ -2,8 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // utils
 import { fadeOutPageTransition } from "../utils/animations/pageTransition";
-// hooks
-import { useUserAuth } from "../hooks/UserAuthContext";
 // css
 import btnStyles from "../css/btns.module.css";
 import layout from "../css/layout.module.css";
@@ -24,13 +22,13 @@ import { deleteExercise, getExercises } from "../features/exercisesSlice";
 import { deleteSet } from "../features/exercisesSetsSlice";
 import { resetSelectedExercise } from "../features/selectedExerciseSlice";
 import { resetSelectedExerciseSet } from "../features/selectedExerciseSetSlice";
+import { logout } from "../features/authSlice";
 
 function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { logOut } = useUserAuth();
-  const { user } = useUserAuth();
+  const { user } = useSelector((state) => state.auth);
 
   const popupType = useSelector((state) => state.popupActionType.popupType);
   const selectedExercise = useSelector((state) => state.selectedExercise);
@@ -93,8 +91,7 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
   };
   // logOut
   const handleLogOut = async () => {
-    logOut();
-    navigateOutFunction("/");
+    dispatch(logout());
   };
   // open exercise rep counter page
   const onStartWorkout = () => {

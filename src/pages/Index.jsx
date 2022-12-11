@@ -1,19 +1,33 @@
-import React, { useRef, useLayoutEffect } from "react";
+import React, { useRef, useLayoutEffect, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+// utils
 import { fadeInPageTransition, fadeOutPageTransition } from "../utils/animations/pageTransition";
-
+// css
 import layout from "../css/layout.module.css";
 import styles from "../css/index.module.css";
 import btnStyles from "../css/btns.module.css";
+// auth status hook
+import { useAuthListener } from "../hooks/authStatus";
+import { setUser } from "../features/authSlice";
+import { useDispatch } from "react-redux";
 
 function Index() {
   const content = useRef(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useLayoutEffect(() => {
     fadeInPageTransition();
   }, []);
+
+  const { currentUser } = useAuthListener();
+
+  useEffect(() => {
+    if (currentUser !== null) {
+      dispatch(setUser(currentUser));
+      navigateOutFunction("/home");
+    }
+  }, [currentUser]);
 
   const navigateOutFunction = (url) => {
     const navigateFunc = () => {

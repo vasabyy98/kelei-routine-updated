@@ -11,12 +11,10 @@ import home from "../css/home.module.css";
 // redux
 import { useDispatch, useSelector } from "react-redux";
 import { createSet } from "../features/exercisesSetsSlice";
-// auth
-import { useUserAuth } from "../hooks/UserAuthContext";
 
 function CreateExerciseSet() {
   const { exercises } = useSelector((state) => state.exercises);
-  const { user } = useUserAuth();
+  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useLayoutEffect(() => {

@@ -5,8 +5,6 @@ import {
   fadeOutTransition,
   fadeInTransition,
 } from "../utils/animations/pageTransition";
-// auth
-import { useUserAuth } from "../hooks/UserAuthContext";
 // get greeting
 import { getGreeting } from "../utils/getTime";
 // css
@@ -29,7 +27,7 @@ import { getExercises } from "../features/exercisesSlice";
 import { getSets } from "../features/exercisesSetsSlice";
 
 function Home() {
-  const { user } = useUserAuth();
+  const { user } = useSelector((state) => state.auth);
 
   return <>{user !== null && <Content />}</>;
 }
@@ -45,7 +43,7 @@ function Content() {
     setGreeting(() => getGreeting());
   }, []);
 
-  const { user } = useUserAuth();
+  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   const [userName, setUserName] = useState("User");
