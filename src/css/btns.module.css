@@ -55,6 +55,9 @@
   border: 1px solid var(--accent-color);
   color: var(--accent-color);
 }
+.deleteBtn {
+  background: #ec371e !important;
+}
 .entry__wrapper {
   width: 100%;
   display: flex;

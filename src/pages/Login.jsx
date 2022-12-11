@@ -2,9 +2,6 @@ import React, { useState, useLayoutEffect, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // utils
 import { fadeInPageTransition, fadeOutPageTransition } from "../utils/animations/pageTransition";
-// auth
-import { useAuthState } from "react-firebase-hooks/auth";
-// import { auth, logInWithEmailAndPassword } from "../firebase-config";
 // hooks
 import { useUserAuth } from "../hooks/UserAuthContext";
 // css

@@ -7,8 +7,6 @@ import {
 } from "../utils/animations/pageTransition";
 // auth
 import { useUserAuth } from "../hooks/UserAuthContext";
-// firebase crud
-import { getData } from "../firebase-config";
 // get greeting
 import { getGreeting } from "../utils/getTime";
 // css

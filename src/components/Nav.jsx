@@ -6,6 +6,8 @@ import { fadeOutPageTransition } from "../utils/animations/pageTransition";
 import { useUserAuth } from "../hooks/UserAuthContext";
 // css
 import btnStyles from "../css/btns.module.css";
+import layout from "../css/layout.module.css";
+import header from "../css/header.module.css";
 // assets
 import { ReactComponent as SignOut } from "../assets/signout.svg";
 import { ReactComponent as Hamburger } from "../assets/hamburger.svg";
@@ -94,12 +96,6 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
     logOut();
     navigateOutFunction("/");
   };
-  // delete exercise
-  const onDeleteExercise = () => {
-    dispatch(deleteExercise(selectedExercise._id))
-      .then(() => dispatch(getExercises(user)))
-      .then(() => dispatch(resetPopupType()));
-  };
   // open exercise rep counter page
   const onStartWorkout = () => {
     navigateOutFunction("/rep-counter");
@@ -113,12 +109,6 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
     setTimeout(() => {
       dispatch(resetPopupType());
     }, 300);
-  };
-  // delete exercise set
-  const onDeleteExerciseSet = () => {
-    dispatch(deleteSet(selectedExerciseSet._id))
-      // .then(() => setAddWrapperVisible(false))
-      .then(() => dispatch(resetPopupType()));
   };
   // edit exercise set
   const onEditExerciseSet = () => {
@@ -148,8 +138,17 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
     dispatch(resetSelectedExerciseSet());
     dispatch(resetPopupType());
   };
+
+  const [showRemovePromt, setShowRemovePromt] = useState(false);
   return (
     <>
+      <RemovePromt
+        user={user}
+        showRemovePromt={showRemovePromt}
+        setShowRemovePromt={setShowRemovePromt}
+        selectedExercise={selectedExercise}
+        selectedExerciseSet={selectedExerciseSet}
+      />
       <div ref={addWrapper} className={nav.add__wrapper}>
         <div className={btnStyles.btns__col}>
           {popupType === "addEntry" && (
@@ -183,8 +182,8 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
                 <span>Edit</span>
               </button>
               <button
-                onClick={onDeleteExercise}
-                className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
+                onClick={() => setShowRemovePromt(true)}
+                className={`${btnStyles.btn} ${btnStyles.primaryBtn} ${btnStyles.deleteBtn}`}
               >
                 <span>Delete</span>
               </button>
@@ -211,8 +210,8 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
                 <span>Edit</span>
               </button>
               <button
-                onClick={onDeleteExerciseSet}
-                className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
+                onClick={() => setShowRemovePromt(true)}
+                className={`${btnStyles.btn} ${btnStyles.primaryBtn} ${btnStyles.deleteBtn}`}
               >
                 <span>Delete</span>
               </button>
@@ -268,3 +267,79 @@ function Nav({ homebtn, signoutBtn, backBtn, backBtnUrl, addBtn }) {
 }
 
 export default Nav;
+
+function RemovePromt({
+  user,
+  showRemovePromt,
+  setShowRemovePromt,
+  selectedExercise,
+  selectedExerciseSet,
+}) {
+  const dispatch = useDispatch();
+  let targetName, targetId;
+  let targetDeleteFunction;
+
+  // delete exercise
+  const onDeleteExercise = () => {
+    dispatch(deleteExercise(selectedExercise._id))
+      .then(() => dispatch(getExercises(user)))
+      .then(() => dispatch(resetPopupType()))
+      .then(() => setShowRemovePromt(false));
+  };
+  // delete exercise set
+  const onDeleteExerciseSet = () => {
+    dispatch(deleteSet(selectedExerciseSet._id))
+      .then(() => dispatch(resetPopupType()))
+      .then(() => setShowRemovePromt(false));
+  };
+
+  if (selectedExercise.exerciseName === "") {
+    targetName = selectedExerciseSet.exerciseSetName;
+    targetId = selectedExerciseSet._id;
+    targetDeleteFunction = onDeleteExerciseSet;
+  } else {
+    targetName = selectedExercise.exerciseName;
+    targetId = selectedExercise._id;
+    targetDeleteFunction = onDeleteExercise;
+  }
+
+  const ref = useRef();
+
+  useEffect(() => {
+    if (showRemovePromt === true) {
+      ref.current.classList.add(nav.show__options);
+    } else {
+      ref.current.classList.remove(nav.show__options);
+    }
+  }, [showRemovePromt]);
+
+  return (
+    <>
+      <section
+        ref={ref}
+        style={{ zIndex: 300 }}
+        className={`${layout.content__wrapper} ${nav.add__wrapper}`}
+      >
+        <div className={layout.flex__layout}>
+          <header className={header.header}>
+            <h2 className={`${header.heading__h2}`}>Remove {targetName}?</h2>
+          </header>
+          <div className={btnStyles.btns__row}>
+            <button
+              onClick={() => setShowRemovePromt(false)}
+              className={`${btnStyles.btn} ${btnStyles.secondaryBtn}`}
+            >
+              <span>No</span>
+            </button>
+            <button
+              onClick={targetDeleteFunction}
+              className={`${btnStyles.btn} ${btnStyles.primaryBtn}`}
+            >
+              <span>Yes</span>
+            </button>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}

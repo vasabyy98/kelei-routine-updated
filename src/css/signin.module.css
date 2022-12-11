@@ -32,6 +32,7 @@
 }
 .radio__wrapper__col .form__control {
   border: unset;
+  padding: 1rem;
 }
 .exercise__wrapper {
   position: relative;
